@@ -1,6 +1,7 @@
 from ReorderBuffer import ROB
 from ReservationStation import ReservationStation
 from RegisterFile import RegisterFile
+from CDB import CDB
 class InstructionQueue:
     #带有loop的怎么处理？
     def __init__(self, read_file_path):
@@ -38,7 +39,7 @@ class InstructionQueue:
     def is_empty(self):
         return self.op_queue == []
     
-    def issue(self, rob: ROB, register_file: RegisterFile, reservation_station: ReservationStation):
+    def issue(self, rob: ROB, register_file: RegisterFile, reservation_station: ReservationStation, cdb: CDB):
         # 取出两条指令，如果是相同指令类型或者保留站不够用则拆分
         """
         不取指令的情况：opqueue为空或保留站满了或者reservation中的对应的第一条是满的
@@ -71,7 +72,7 @@ class InstructionQueue:
 
         # TODO:如果此时后面还有指令需要存进来
 
-        return rob.issue(issue_bundle, register_file, reservation_station)
+        return rob.issue(issue_bundle, register_file, reservation_station, cdb)
         
 if __name__ == '__main__':
     ins_op = InstructionQueue('python\ComputerArchitecture\Dual_spec\input.txt')

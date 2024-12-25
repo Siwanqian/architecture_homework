@@ -2,30 +2,33 @@ from RegisterFile import RegisterFile
 from ExecUnit import FPAdder, FPMultiplier, AddressUnit, MemoryUnit, IntegerUnit
 from prettytable import PrettyTable
 from CDB import CDB
+import copy
 
 class ReservationStation:
     def __init__(self):
         # 3个浮点加法保留站，两个乘除保留站，2个整数单元，2个ld单元和2个sd单元
         self.entries = {
             'Load':[
-                {'Name': 'Load{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None} for i in range(1,6)
+                {'Name': 'Load{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None, 'Item': None} for i in range(1,6)
             ],
             'Add':[
-                {'Name': 'Add{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None} for i in range(1,4)
+                {'Name': 'Add{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None, 'Item': None} for i in range(1,4)
             ],
             'Mult':[
-                {'Name': 'Mult{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None} for i in range(1,3)
+                {'Name': 'Mult{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None, 'Item': None} for i in range(1,3)
             ],
             'Store':[
-                {'Name': 'Store{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None} for i in range(1,4)
+                {'Name': 'Store{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None, 'Item': None} for i in range(1,4)
             ],
             'Int':[
-                {'Name': 'Int{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None} for i in range(1,6)
+                {'Name': 'Int{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None, 'Item': None} for i in range(1,6)
             ]
         }
         self.check_dict = {
             'fld': 'Load', 'ld': 'Load', 'fadd.d': 'Add', 'addi': 'Int', 'fsub.d': 'Add', 'fmul.d': 'Mult', 'fdiv.d': 'Mult', 'sd': 'Store', 'bne': 'Int'
         }
+        self.old_entries = copy.deepcopy(self.entries)
+        self.item = 1
         self.fp_adder = FPAdder()
         self.fp_multipliers = FPMultiplier()
         self.address_unit = AddressUnit()
@@ -38,7 +41,7 @@ class ReservationStation:
             raise ValueError('保留站类is_full函数出现未定义操作{}'.format(op))
         
         entry_name = self.check_dict[op]
-        for entry in self.entries[entry_name]:
+        for entry in self.old_entries[entry_name]:
             if entry['Busy'] == False:
                 return False
         return True
@@ -54,48 +57,63 @@ class ReservationStation:
 
 
     def execute(self, rob, cdb: CDB):
-        for unit in self.entries.values():
+        for unit_name, unit in self.old_entries.items():
+            exec_unit = None
+            exec_entry = None
+            old_item = None
             for entry in unit:
                 if not entry['Busy'] or entry['Qj']!=None:
                     continue
-
-                exec_unit = None
                 if self.check_dict[entry['Op']] == 'Add' and rob.get_state(entry['Dest'])=='Issue' and entry['Qk']==None:
-                    exec_unit = self.fp_adder
+                    if exec_unit == None or old_item >= entry['Item']:
+                        exec_unit = self.fp_adder
+                        old_item = entry['Item']
+                        exec_entry = entry
                 elif self.check_dict[entry['Op']] == 'Mult' and rob.get_state(entry['Dest'])=='Issue' and entry['Qk']==None:
-                    exec_unit = self.fp_multipliers
+                    if exec_unit == None or old_item >= entry['Item']:
+                        exec_unit = self.fp_multipliers
+                        old_item = entry['Item']
+                        exec_entry = entry
                 elif self.check_dict[entry['Op']] == 'Load' or self.check_dict[entry['Op']] == 'Store':
                     if rob.get_state(entry['Dest']) == 'Issue':
-                        exec_unit = self.address_unit
+                        if exec_unit == None or old_item >= entry['Item']:
+                            exec_unit = self.address_unit
+                            old_item = entry['Item']
+                            exec_entry = entry
                     elif rob.get_state(entry['Dest']) == 'Execute' and self.check_dict[entry['Op']] == 'Load':
-                        exec_unit = self.memory_unit
-                    else:
-                        continue
+                        if exec_unit == None or old_item >= entry['Item']:
+                            exec_unit = self.memory_unit
+                            old_item = entry['Item']
+                            exec_entry = entry
                 elif self.check_dict[entry['Op']] == 'Int' and rob.get_state(entry['Dest'])=='Issue' and entry['Qk']==None:
-                    exec_unit = self.integer_unit
+                    if exec_unit == None or old_item >= entry['Item']:
+                        exec_unit = self.integer_unit
+                        old_item = entry['Item']
+                        exec_entry = entry
                 elif entry['Op'] not in self.check_dict:
                     raise ValueError('{}功能单元未定义'.format(entry['Op']))
-                else:
-                    continue
-
                 # 把ROB改成执行
-                if not exec_unit.is_busy():                    
-                    if self.check_dict[entry['Op']] == 'Load':
-                        if rob.get_state(entry['Dest']) == 'Issue':
-                            exec_unit.issue_instruction(entry['A'], entry['Vj'], entry)
-                        elif rob.get_state(entry['Dest']) == 'Execute' :
-                            exec_unit.issue_instruction(entry['A'], entry['Dest'])
-                    elif  self.check_dict[entry['Op']] == 'Store':
-                        exec_unit.issue_instruction(entry['A'], entry['Vj'], entry)
-                    else:
-                        exec_unit.issue_instruction(entry['Op'], entry['Vj'], entry['Vk'], entry['Dest'])
+            if exec_unit != None and not exec_unit.is_busy():                    
+                if self.check_dict[exec_entry['Op']] == 'Load':
+                    if rob.get_state(exec_entry['Dest']) == 'Issue':
+                        for new_entry in self.entries[unit_name]:
+                            if new_entry['Name'] == exec_entry['Name']:
+                                exec_unit.issue_instruction(exec_entry['A'], exec_entry['Vj'], new_entry)
+                    elif rob.get_state(exec_entry['Dest']) == 'Execute' :
+                        exec_unit.issue_instruction(exec_entry['A'], exec_entry['Dest'])
+                elif  self.check_dict[exec_entry['Op']] == 'Store':
+                    for new_entry in self.entries[unit_name]:
+                            if new_entry['Name'] == exec_entry['Name']:
+                                exec_unit.issue_instruction(exec_entry['A'], exec_entry['Vj'], new_entry)
+                else:
+                    exec_unit.issue_instruction(exec_entry['Op'], exec_entry['Vj'], exec_entry['Vk'], exec_entry['Dest'])
         self.fp_adder.execute(cdb, rob)
         self.fp_multipliers.execute(cdb, rob)
         self.address_unit.execute(rob)
         self.integer_unit.execute(cdb, rob)
         self.memory_unit.execute(cdb, rob)
 
-    def set_station(self, register_file: RegisterFile, issue_bundle: tuple, rob, dependece: dict, rob_entries: list):
+    def set_station(self, register_file: RegisterFile, issue_bundle: tuple, rob, dependece: dict, rob_entries: list, cdb: CDB):
         for i, ops in enumerate(issue_bundle):
             op = ops[0]
             if op not in self.check_dict:
@@ -103,13 +121,18 @@ class ReservationStation:
 
             entry_name = self.check_dict[op]
 
-            entry = None
-            for ent in self.entries[entry_name]:
+            entry_ = None
+            for ent in self.old_entries[entry_name]:
                 if ent['Busy'] == False:
+                    entry_ = ent
+                    break
+            if entry_ == None:
+                raise ValueError('保留站类set_station函数{}类型条目已满'.format(entry_name))
+            
+            for ent in self.entries[entry_name]:
+                if entry_['Name'] == ent['Name']:
                     entry = ent
                     break
-            if entry == None:
-                raise ValueError('保留站类set_station函数{}类型条目已满'.format(entry_name))    
             
             # 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None
             # 第二条指令
@@ -119,6 +142,12 @@ class ReservationStation:
             entry['Busy'] = True
             entry['Op'] = op
             entry['Dest'] = str(rob_entries[i])
+            entry['Item'] = self.item
+            self.item += 1
+            cdb_data = cdb.get_data()
+            dict_data = {}
+            for data in cdb_data:
+                dict_data[data['Dest']] = data['Value']
             j_value = None
             k_value = None
             if entry_name == 'Load': # ld x2,0(x1)
@@ -150,12 +179,16 @@ class ReservationStation:
                 else:
                     reorder =  register_file.check_reg_state(j_value)
                     value = rob.check_dest_state(reorder)
-                    if value == 'NotReady':
+                    if reorder in dict_data:
+                        entry['Vj'] = dict_data[reorder]
+                        entry['Qj'] = None
+                    elif value == 'NotReady':
                         entry['Qj'] = reorder
                         entry['Vj'] = None
                     else:
                         entry['Vj'] = value
                         entry['Qj'] = None
+
 
             if k_value != None:
                 if i == 1 and k_value in dependece:
@@ -167,7 +200,10 @@ class ReservationStation:
                 else:
                     reorder =  register_file.check_reg_state(k_value)
                     value = rob.check_dest_state(reorder)
-                    if value == 'NotReady':
+                    if reorder in dict_data:
+                        entry['Vk'] = dict_data[reorder]
+                        entry['Qk'] = None
+                    elif value == 'NotReady':
                         entry['Qk'] = reorder
                         entry['Vk'] = None
                     else:
@@ -177,24 +213,18 @@ class ReservationStation:
         return
     
     def is_store_able(self, h: int):
-        for unit_name, unit in self.entries.items():
-            if unit_name != 'Store':
-                continue
-            for entry in unit:
-                if str(h) == entry['Dest'] and entry['Qk'] == None:
-                    return True
+        for entry in self.old_entries['Store']:
+            if str(h) == entry['Dest'] and entry['Qk'] == None:
+                return True
         return False
 
 
     def write_store_back(self, rob_entry: dict, h: int):
-        for unit_name, unit in self.entries.items():
-            if unit_name != 'Store':
-                continue
-            for entry in unit:
-                if str(h) == entry['Dest'] and rob_entry!= None and entry['Qk'] == None:
-                    rob_entry['Value'] = entry['Vk']
-                    self.memory_unit.Mem[entry['A']] = rob_entry['Value']
-                    return True
+        for entry in self.old_entries['Store']:
+            if str(h) == entry['Dest'] and rob_entry!= None and entry['Qk'] == None:
+                rob_entry['Value'] = entry['Vk']
+                self.memory_unit.Mem[entry['A']] = rob_entry['Value']
+                return True
         return False
     
 
@@ -217,13 +247,15 @@ class ReservationStation:
                         entry['Qk'] = None
         return
 
+    def recover_data(self):
+        self.old_entries = copy.deepcopy(self.entries)
 
 
     def show(self):
         # reload(sys)
         # sys.setdefaultencoding('utf8')
 
-        head = ['Name', 'Busy', 'Op', 'Vj', 'Vk', 'Qj', 'Qk', 'Dest', 'A']
+        head = ['Name', 'Busy', 'Op', 'Vj', 'Vk', 'Qj', 'Qk', 'Dest', 'A', 'Item']
         table = PrettyTable(head)
 
         for unit in self.entries.values():

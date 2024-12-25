@@ -5,6 +5,7 @@ class RegisterFile:
         # 'x{} {}'.format(str(i+1),str(1))
         self.register_file = {'x{}'.format(j): {'Reorder': None, 'Busy': False, 'Value': 0} for j in range(1, 4)}
         self.register_file['x1']['Value'] = 1000
+        self.old_register_file = copy.deepcopy(self.register_file)
 
 
     def set_registers(self, reg: str, reorder: str):
@@ -17,7 +18,7 @@ class RegisterFile:
         return self.register_file.keys()
     
     def get_value(self, reg):
-        return self.register_file[reg]['Value']
+        return self.old_register_file[reg]['Value']
     
     def set_reg_value(self, reg: str, value: str):
         if reg not in self.registers():
@@ -31,8 +32,8 @@ class RegisterFile:
         if reg not in self.registers():
             raise ValueError('RegisterFile类检查到错误寄存器{}'.format(reg))
         
-        if self.register_file[reg]['Busy']:
-            return self.register_file[reg]['Reorder']
+        if self.old_register_file[reg]['Busy']:
+            return self.old_register_file[reg]['Reorder']
         
         return 'Free'
     
@@ -45,6 +46,9 @@ class RegisterFile:
         
         return
     
+    def recover_data(self):
+        self.old_register_file = copy.deepcopy(self.register_file)
+
     def show(self):
         # reload(sys)
         # sys.setdefaultencoding('utf8')

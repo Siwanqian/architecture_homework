@@ -38,13 +38,16 @@ class DIPS:
             print(f"-------------------------------Clock {self.clock}-------------------------------\n")
             self.comment += f"-------------------------------Clock {self.clock}-------------------------------\n"
             self.rob.commit(self.register_file, self.reservation_station, self.cdb)
-            self.rob.store_cdb(self.cdb)
+            self.rob.write_result(self.reservation_station, self.cdb)
+            self.op_queue.issue(self.rob, self.register_file, self.reservation_station, self.cdb)
             self.cdb.clear()
             self.reservation_station.execute(self.rob, self.cdb)
-            self.rob.write_result()
-            self.op_queue.issue(self.rob, self.register_file, self.reservation_station)
-            self.reservation_station.write_result(self.rob.temp_data)
-                                                             
+            
+
+            self.reservation_station.recover_data()
+            self.register_file.recover_data()
+            self.rob.recover_data()
+            
             self.comment += f"                           ROB\n"
             self.comment += self.rob.show() + '\n'
             self.comment += f"                         ReservationStation\n"

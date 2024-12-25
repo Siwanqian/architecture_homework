@@ -1,4 +1,4 @@
-import re
+import copy
 from ReservationStation import ReservationStation
 from RegisterFile import RegisterFile
 from prettytable import PrettyTable
@@ -10,29 +10,31 @@ class ROB:
             } for i in range(1, entries_num+1)]
         self.entries.insert(0, None)
 
-        self.temp_data = None
         self.entries_num = entries_num
         self.head = 1
         self.tail = 1
+        self.old_entries = copy.deepcopy(self.entries)
+        self.old_head = self.head
+        self.old_tail = self.tail
 
     def is_full(self):
-        if self.tail ==self.head and self.entries[self.head]['Busy']:
+        if self.old_tail ==self.old_head and self.old_entries[self.old_head]['Busy']:
             return True
         return False
     
     def is_empty(self):
-        if self.tail ==self.head and not self.entries[self.head]['Busy']:
+        if self.old_tail == self.old_head and not self.old_entries[self.old_head]['Busy']:
             return True
         return False
     
     def get_empty_count(self):
+        print(self.old_head, self.old_tail)
         if self.is_full():
             return 0
         elif self.is_empty():
             return self.entries_num
         else:
-            return (self.tail-self.head) % self.entries_num
-        
+            return (self.entries_num - (self.old_tail-self.old_head)) % self.entries_num
     """def allocate_pos(self, num: int):
         if num > 2 or num <= 0 or self.get_empty_count() < num:
             raise ValueError('非法num')
@@ -41,7 +43,7 @@ class ROB:
             entry.append(self.entries[(self.tail+i)%self.entries_num+1])
         return entry"""
 
-    def issue(self, issue_bundle: tuple, register_file: RegisterFile, reservation_station: ReservationStation):
+    def issue(self, issue_bundle: tuple, register_file: RegisterFile, reservation_station: ReservationStation, cdb: CDB):
         if self.entries[self.tail]['Busy']:
             raise ValueError("ROB模块issue异常发射")
         
@@ -91,7 +93,7 @@ class ROB:
 
 
         # 保留站
-        reservation_station.set_station(register_file, issue_bundle, self, dependence, entries)
+        reservation_station.set_station(register_file, issue_bundle, self, dependence, entries, cdb)
         
 
         self.entries[self.tail]['Busy'] = True
@@ -180,7 +182,7 @@ class ROB:
         
 
     def get_state(self, index: str):
-        return self.entries[int(index)]['State']
+        return self.old_entries[int(index)]['State']
     
     def change_state(self, index: str, state: str):
         if state not in ['Issue', 'Execute', 'WriteResult', 'MemoryAccess', 'Commit']:
@@ -188,32 +190,28 @@ class ROB:
         self.entries[int(index)]['State'] = state
     
     def check_dest_state(self, reorder):
-        if self.entries[int(reorder)]['State'] in ['WriteResult', 'Commit']:
-            return self.entries[int(reorder)]['Value']
+        if self.old_entries[int(reorder)]['State'] in ['WriteResult', 'Commit']:
+            return self.old_entries[int(reorder)]['Value']
         
         return 'NotReady'
 
-    def store_cdb(self, cdb: CDB):
+    def write_result(self, reservation_station: ReservationStation, cdb: CDB):
         if cdb.is_empty():
-            self.temp_data = None
             return
-        import copy
-        self.temp_data = copy.deepcopy(cdb.get_data())
+        cdb_data = cdb.get_data()
         # self.temp_data = cdb.get_data()
-        for data in self.temp_data:
+        for data in cdb_data:
+            self.entries[int(data['Dest'])]['Value'] = data['Value']
             if self.entries[int(data['Dest'])]['Instruction'].split()[0] != 'bne':
                 self.entries[int(data['Dest'])]['State'] = 'WriteResult'
+        
+        reservation_station.write_result(cdb_data)
 
-    def write_result(self):
-        # 从cdb中读取结果并写在rob上，然后更新regstation
-        # 返回的data：dest、
-        if self.temp_data != None:
-            for data in self.temp_data:
-                self.entries[int(data['Dest'])]['Value'] = data['Value']
-                # data['Value'] = 'Regs[{}]'.format(self.entries[int(data['Dest'])]['Dest'])
-                # 写回reservation_station
     
-            
+    def recover_data(self):
+        self.old_entries = copy.deepcopy(self.entries)
+        self.old_head = self.head
+        self.old_tail = self.tail
 
     
     def show(self):
