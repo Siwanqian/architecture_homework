@@ -1,0 +1,1425 @@
+-------------------------------Clock 1-------------------------------
+                         ReservationStation
++--------+-------+------+----------+------+------+------+------+-------+
+|  Name  |  Busy |  Op  |    Vj    |  Vk  |  Qj  |  Qk  |  A   | State |
++--------+-------+------+----------+------+------+------+------+-------+
+| Load1  |  True | fld  | Regs[x2] | None | None | None |  32  | Issue |
+| Load2  | False | None |   None   | None | None | None | None |  None |
+|  Add1  | False | None |   None   | None | None | None | None |  None |
+|  Add2  | False | None |   None   | None | None | None | None |  None |
+|  Add3  | False | None |   None   | None | None | None | None |  None |
+| Mult1  | False | None |   None   | None | None | None | None |  None |
+| Mult2  | False | None |   None   | None | None | None | None |  None |
+| Store1 | False | None |   None   | None | None | None | None |  None |
+| Store2 | False | None |   None   | None | None | None | None |  None |
+|  Int1  | False | None |   None   | None | None | None | None |  None |
+|  Int2  | False | None |   None   | None | None | None | None |  None |
++--------+-------+------+----------+------+------+------+------+-------+
+                                   Registers
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |   f2  |   f3  |   f4  |   f5  |   f6  |   f7  |   f8  |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|  Qi  |  None |  None |  None |  None |  None |  None | Load1 |  None |  None |  None |  None |  None |  None |  None |
+| Busy | False | False | False | False | False | False |  True | False | False | False | False | False | False | False |
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 2-------------------------------
+                         ReservationStation
++--------+-------+------+----------+------+------+------+-------------+---------+
+|  Name  |  Busy |  Op  |    Vj    |  Vk  |  Qj  |  Qk  |      A      |  State  |
++--------+-------+------+----------+------+------+------+-------------+---------+
+| Load1  |  True | fld  | Regs[x2] | None | None | None | Regs[x2]+32 | Execute |
+| Load2  |  True | fld  | Regs[x3] | None | None | None |      44     |  Issue  |
+|  Add1  | False | None |   None   | None | None | None |     None    |   None  |
+|  Add2  | False | None |   None   | None | None | None |     None    |   None  |
+|  Add3  | False | None |   None   | None | None | None |     None    |   None  |
+| Mult1  | False | None |   None   | None | None | None |     None    |   None  |
+| Mult2  | False | None |   None   | None | None | None |     None    |   None  |
+| Store1 | False | None |   None   | None | None | None |     None    |   None  |
+| Store2 | False | None |   None   | None | None | None |     None    |   None  |
+|  Int1  | False | None |   None   | None | None | None |     None    |   None  |
+|  Int2  | False | None |   None   | None | None | None |     None    |   None  |
++--------+-------+------+----------+------+------+------+-------------+---------+
+                                   Registers
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |   f2  |   f3  |   f4  |   f5  |   f6  |   f7  |   f8  |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|  Qi  |  None |  None | Load2 |  None |  None |  None | Load1 |  None |  None |  None |  None |  None |  None |  None |
+| Busy | False | False |  True | False | False | False |  True | False | False | False | False | False | False | False |
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 3-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+--------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State     |
++--------+-------+--------+----------+----------+-------+------+-------------+--------------+
+| Load1  |  True |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | MemoryAccess |
+| Load2  |  True |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 |   Execute    |
+|  Add1  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+|  Add2  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+| Mult1  |  True | fmul.d |   None   | Regs[f4] | Load2 | None |     None    |    Issue     |
+| Mult2  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
++--------+-------+--------+----------+----------+-------+------+-------------+--------------+
+                                   Registers
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |   f2  |   f3  |   f4  |   f5  |   f6  |   f7  |   f8  |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|  Qi  | Mult1 |  None | Load2 |  None |  None |  None | Load1 |  None |  None |  None |  None |  None |  None |  None |
+| Busy |  True | False |  True | False | False | False |  True | False | False | False | False | False | False | False |
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 4-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+--------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State     |
++--------+-------+--------+----------+----------+-------+------+-------------+--------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult  |
+| Load2  |  True |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | MemoryAccess |
+|  Add1  |  True | fsub.d |   None   | Regs[f6] | Load2 | None |     None    |    Issue     |
+|  Add2  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+| Mult1  |  True | fmul.d |   None   | Regs[f4] | Load2 | None |     None    |    Issue     |
+| Mult2  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None     |
++--------+-------+--------+----------+----------+-------+------+-------------+--------------+
+                                   Registers
++------+-------+-------+-------+-------+-------+-------+------------------+-------+------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |   f2  |   f3  |   f4  |   f5  |        f6        |   f7  |  f8  |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+-------+-------+-------+-------+------------------+-------+------+-------+-------+-------+-------+-------+
+|  Qi  | Mult1 |  None | Load2 |  None |  None |  None | Mem[Regs[x2]+32] |  None | Add1 |  None |  None |  None |  None |  None |
+| Busy |  True | False |  True | False | False | False |      False       | False | True | False | False | False | False | False |
++------+-------+-------+-------+-------+-------+-------+------------------+-------+------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 5-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  |  True | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    |    Issue    |
+|  Add2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |    Issue    |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+------------------+-------+------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |        f6        |   f7  |  f8  |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+------------------+-------+------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Mem[Regs[x2]+32] |  None | Add1 |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |      False       | False | True | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+------------------+-------+------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 6-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  |  True | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    |   Execute   |
+|  Add2  |  True | fadd.d |   None   | Regs[f2] |  Add1 | None |     None    |    Issue    |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+------+-------+------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |  f6  |   f7  |  f8  |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+------+-------+------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Add2 |  None | Add1 |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False | True | False | True | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+------+-------+------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 7-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  |  True | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    |   Execute   |
+|  Add2  |  True | fadd.d |   None   | Regs[f2] |  Add1 | None |     None    |    Issue    |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+------+-------+------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |  f6  |   f7  |  f8  |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+------+-------+------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Add2 |  None | Add1 |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False | True | False | True | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+------+-------+------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 8-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    | WriteResult |
+|  Add2  |  True | fadd.d | Regs[f8] | Regs[f2] |  None | None |     None    |    Issue    |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |  f6  |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Add2 |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False | True | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 9-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    | WriteResult |
+|  Add2  |  True | fadd.d | Regs[f8] | Regs[f2] |  None | None |     None    |   Execute   |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |  f6  |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Add2 |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False | True | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 10-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    | WriteResult |
+|  Add2  |  True | fadd.d | Regs[f8] | Regs[f2] |  None | None |     None    |   Execute   |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |  f6  |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Add2 |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False | True | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 11-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d | Regs[f8] | Regs[f2] |  None | None |     None    | WriteResult |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 12-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d | Regs[f8] | Regs[f2] |  None | None |     None    | WriteResult |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 13-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d | Regs[f8] | Regs[f2] |  None | None |     None    | WriteResult |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 14-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d | Regs[f8] | Regs[f2] |  None | None |     None    | WriteResult |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 15-------------------------------
+                         ReservationStation
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |    Vj    |    Vk    |   Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+| Load1  | False |  fld   | Regs[x2] |   None   |  None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   | Regs[x3] |   None   |  None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d | Regs[f2] | Regs[f6] |  None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d | Regs[f8] | Regs[f2] |  None | None |     None    | WriteResult |
+|  Add3  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Mult1  |  True | fmul.d | Regs[f2] | Regs[f4] |  None | None |     None    |   Execute   |
+| Mult2  |  True | fdiv.d |   None   | Regs[f6] | Mult1 | None |     None    |    Issue    |
+| Store1 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+| Store2 | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int1  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
+|  Int2  | False |  None  |   None   |   None   |  None | None |     None    |     None    |
++--------+-------+--------+----------+----------+-------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 16-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |    Issue    |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 17-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 18-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 19-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 20-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 21-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 22-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 23-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 24-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 25-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 26-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 27-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 28-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 29-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 30-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 31-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 32-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 33-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 34-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 35-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 36-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 37-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 38-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 39-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 40-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 41-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 42-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 43-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 44-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 45-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 46-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 47-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 48-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 49-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 50-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 51-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 52-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 53-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 54-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 55-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 56-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  |  True | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    |   Execute   |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |   f0  |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Mult2 |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |  True | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+-------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
+-------------------------------Clock 57-------------------------------
+                         ReservationStation
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+|  Name  |  Busy |   Op   |     Vj     |    Vk    |  Qj  |  Qk  |      A      |    State    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+| Load1  | False |  fld   |  Regs[x2]  |   None   | None | None | Regs[x2]+32 | WriteResult |
+| Load2  | False |  fld   |  Regs[x3]  |   None   | None | None | Regs[x3]+44 | WriteResult |
+|  Add1  | False | fsub.d |  Regs[f2]  | Regs[f6] | None | None |     None    | WriteResult |
+|  Add2  | False | fadd.d |  Regs[f8]  | Regs[f2] | None | None |     None    | WriteResult |
+|  Add3  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Mult1  | False | fmul.d |  Regs[f2]  | Regs[f4] | None | None |     None    | WriteResult |
+| Mult2  | False | fdiv.d | Regs[None] | Regs[f6] | None | None |     None    | WriteResult |
+| Store1 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+| Store2 | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int1  | False |  None  |    None    |   None   | None | None |     None    |     None    |
+|  Int2  | False |  None  |    None    |   None   | None | None |     None    |     None    |
++--------+-------+--------+------------+----------+------+------+-------------+-------------+
+                                   Registers
++------+---------------------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+| Reg  |          f0         |   f1  |        f2        |   f3  |   f4  |   f5  |         f6        |   f7  |         f8        |   f9  |  f10  |   x1  |   x2  |   x3  |
++------+---------------------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+|  Qi  | Regs[None]/Regs[f6] |  None | Mem[Regs[x3]+44] |  None |  None |  None | Regs[f8]-Regs[f2] |  None | Regs[f2]-Regs[f6] |  None |  None |  None |  None |  None |
+| Busy |        False        | False |      False       | False | False | False |       False       | False |       False       | False | False | False | False | False |
++------+---------------------+-------+------------------+-------+-------+-------+-------------------+-------+-------------------+-------+-------+-------+-------+-------+
+
