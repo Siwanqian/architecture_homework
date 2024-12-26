@@ -2,6 +2,7 @@ from RegisterFile import RegisterFile
 from ExecUnit import FPAdder, FPMultiplier, AddressUnit, MemoryUnit, IntegerUnit
 from prettytable import PrettyTable
 from CDB import CDB
+import copy
 
 class ReservationStation:
     def __init__(self):
@@ -26,6 +27,8 @@ class ReservationStation:
         self.check_dict = {
             'fld': 'Load', 'ld': 'Load', 'fadd.d': 'Add', 'addi': 'Int', 'fsub.d': 'Add', 'fmul.d': 'Mult', 'fdiv.d': 'Mult', 'sd': 'Store', 'bne': 'Int'
         }
+        self.old_entries = copy.deepcopy(self.entries)
+        self.item = 1
         self.fp_adder = FPAdder()
         self.fp_multipliers = FPMultiplier()
         self.address_unit = AddressUnit()
@@ -40,7 +43,7 @@ class ReservationStation:
             raise ValueError('保留站类is_full函数出现未定义操作{}'.format(op))
         
         entry_name = self.check_dict[op]
-        for entry in self.entries[entry_name]:
+        for entry in self.old_entries[entry_name]:
             if entry['Busy'] == False:
                 return False
         return True
@@ -65,49 +68,72 @@ class ReservationStation:
 
     def execute(self, cdb: CDB):
         # 只允许执行bne及之前的内容
+        # 4self.show()
         execute_item = self.item if self.loop_item==[] else self.loop_item[0]
-        print(self.loop_item)
-        for unit in self.entries.values():
+        for unit_name, unit in self.old_entries.items():
+            exec_unit = None
+            exec_entry = None
+            old_item = None
             for entry in unit:
                 if not entry['Busy'] or entry['Qj']!=None or entry['Item'] > execute_item:
                     continue
-                exec_unit = None
                 if self.check_dict[entry['Op']] == 'Add' and entry['State']=='Issue' and entry['Qk']==None:
-                    exec_unit = self.fp_adder
+                    if exec_unit == None or old_item >= entry['Item']:
+                        exec_unit = self.fp_adder
+                        old_item = entry['Item']
+                        exec_entry = entry
                 elif self.check_dict[entry['Op']] == 'Mult' and entry['State']=='Issue' and entry['Qk']==None:
-                    exec_unit = self.fp_multipliers
-                elif self.check_dict[entry['Op']] == 'Load' or self.check_dict[entry['Op']] == 'Store':
+                    if exec_unit == None or old_item >= entry['Item']:
+                        exec_unit = self.fp_multipliers
+                        old_item = entry['Item']
+                        exec_entry = entry
+                elif self.check_dict[entry['Op']] == 'Load':
                     if entry['State'] == 'Issue':
+                        if exec_unit == None or old_item >= entry['Item']:
+                            exec_unit = self.address_unit
+                            old_item = entry['Item']
+                            exec_entry = entry
+                    elif entry['State'] == 'Execute':
+                        if exec_unit == None or old_item >= entry['Item']:
+                            exec_unit = self.memory_unit
+                            old_item = entry['Item']
+                            exec_entry = entry
+                elif self.check_dict[entry['Op']] == 'Store' and entry['State']=='Issue':
+                    if exec_unit == None or old_item >= entry['Item']:
                         exec_unit = self.address_unit
-                    elif entry['State'] == 'Execute' and self.check_dict[entry['Op']] == 'Load':
-                        exec_unit = self.memory_unit
-                    else:
-                        continue
+                        old_item = entry['Item']
+                        exec_entry = entry
                 elif self.check_dict[entry['Op']] == 'Int' and entry['State']=='Issue' and entry['Qk']==None:
-                    exec_unit = self.integer_unit
+                    if exec_unit == None or old_item >= entry['Item']:
+                        exec_unit = self.integer_unit
+                        old_item = entry['Item']
+                        exec_entry = entry
                 elif entry['Op'] not in self.check_dict:
                     raise ValueError('{}功能单元未定义'.format(entry['Op']))
-                else:
-                    continue
 
                 # 把ROB改成执行
-                if not exec_unit.is_busy():                    
-                    if self.check_dict[entry['Op']] == 'Load':
-                        if entry['State'] == 'Issue':
-                            exec_unit.issue_instruction(entry['A'], entry['Vj'], entry)
-                        elif entry['State'] == 'Execute' :
-                            exec_unit.issue_instruction(entry['A'], entry['Name'])
-                    elif  self.check_dict[entry['Op']] == 'Store':
-                        exec_unit.issue_instruction(entry['A'], entry['Vj'], entry)
-                    else:
-                        exec_unit.issue_instruction(entry['Op'], entry['Vj'], entry['Vk'], entry['Name'])
+            if exec_unit != None and not exec_unit.is_busy():
+                if self.check_dict[exec_entry['Op']] == 'Load':
+                    if exec_entry['State'] == 'Issue':
+                        for new_entry in self.entries[unit_name]:
+                            if new_entry['Name'] == exec_entry['Name']:
+                                exec_unit.issue_instruction(exec_entry['A'], exec_entry['Vj'], new_entry)
+                    elif exec_entry['State'] == 'Execute':
+                        exec_unit.issue_instruction(exec_entry['A'], exec_entry['Name'])
+                elif  self.check_dict[exec_entry['Op']] == 'Store':
+                    for new_entry in self.entries[unit_name]:
+                            if new_entry['Name'] == exec_entry['Name']:
+                                exec_unit.issue_instruction(exec_entry['A'], exec_entry['Vj'], new_entry)
+                else:
+                    exec_unit.issue_instruction(exec_entry['Op'], exec_entry['Vj'], exec_entry['Vk'], exec_entry['Name'])
+        
         self.fp_adder.execute(cdb, self)
         self.fp_multipliers.execute(cdb, self)
         self.address_unit.execute(self)
         self.integer_unit.execute(cdb, self)
         self.memory_unit.execute(cdb, self)
 
-    def issue(self, issue_bundle: tuple, register_file: RegisterFile):
+    def issue(self, issue_bundle: tuple, register_file: RegisterFile, cdb: CDB):
         bundle_size = len(issue_bundle)
         # 记录冲突信息
         dependence = {}
@@ -148,12 +174,17 @@ class ReservationStation:
             entry_name = self.check_dict[op]
             
             entry = None
-            for ent in self.entries[entry_name]:
+            for ent in self.old_entries[entry_name]:
                 if ent['Busy'] == False:
+                    entry_ = ent
+                    break
+            if entry_ == None:
+                raise ValueError('保留站类issue函数{}类型条目已满'.format(entry_name))
+            
+            for ent in self.entries[entry_name]:
+                if entry_['Name'] == ent['Name']:
                     entry = ent
                     break
-            if entry == None:
-                raise ValueError('保留站类set_station函数{}类型条目已满'.format(entry_name))    
             
             if i == 0:
                 first_entry = entry['Name']
@@ -169,6 +200,12 @@ class ReservationStation:
             if op == 'bne':
                 self.loop_item.append(entry['Item'])
             self.item += 1
+
+            cdb_data = cdb.get_data()
+            dict_data = {}
+            for data in cdb_data:
+                dict_data[data['Dest']] = data['Value']
+    
             j_value = None
             k_value = None
             if entry_name == 'Load': # ld x2,0(x1)
@@ -198,8 +235,13 @@ class ReservationStation:
                     entry['Vj'] = register_file.get_value(j_value)
                     entry['Qj'] = None
                 else:
-                    entry['Qj'] = register_file.check_reg_state(j_value)
-                    entry['Vj'] = None
+                    dest = register_file.check_reg_state(j_value)
+                    if dest in dict_data:
+                        entry['Vj'] = dict_data[dest]
+                        entry['Qj'] = None
+                    else:
+                        entry['Qj'] = dest
+                        entry['Vj'] = None
 
 
             if k_value != None:
@@ -210,8 +252,13 @@ class ReservationStation:
                     entry['Vk'] = register_file.get_value(j_value)
                     entry['Qk'] = None
                 else:
-                    entry['Qk'] = register_file.check_reg_state(k_value)
-                    entry['Vk'] = None
+                    dest = register_file.check_reg_state(k_value)
+                    if dest in dict_data:
+                        entry['Vk'] = dict_data[dest]
+                        entry['Qk'] = None
+                    else:
+                        entry['Qk'] = dest
+                        entry['Vk'] = None
 
             if ops[0] != 'sd' and ops[0] != 'bne':
                 register_file.set_registers(ops[1], entry['Name']) 
@@ -225,21 +272,10 @@ class ReservationStation:
                 entry['State'] = 'MemoryAccess'
                 entry['Busy'] = False
 
-    def store_cdb(self, data):
-        for data_ in data:
-            for unit in self.entries.values():
-                for entry in unit:
-                    if entry['Name'] == data_['Dest']:
-                        entry['Busy'] = False
-                        entry['State'] = 'WriteResult'
-                        if entry['Op'] == 'bne':
-                            self.loop_item.pop(0)
 
 
     def write_result(self, data_list: list):
         # 如果是bne，判断能不能继续执行
-        # 
-        print(data_list)
         for unit in self.entries.values():
             for entry in unit:
                 if not entry['Busy']:
@@ -247,7 +283,9 @@ class ReservationStation:
                 for data in data_list:
                     if entry['Name'] == data['Dest']:
                         entry['Busy'] = False
-                        continue
+                        entry['State'] = 'WriteResult'
+                        if entry['Op'] == 'bne':
+                            self.loop_item.pop(0)
                     if entry['Qj'] == data['Dest']:
                         entry['Vj'] = data['Value']
                         entry['Qj'] = None
@@ -274,6 +312,9 @@ class ReservationStation:
 
         print(table)
         return str(table)
+    
+    def recover_data(self):
+        self.old_entries = copy.deepcopy(self.entries)
 
 
 

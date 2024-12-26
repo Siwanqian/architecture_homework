@@ -74,17 +74,22 @@ class ReservationStation:
                         exec_unit = self.fp_multipliers
                         old_item = entry['Item']
                         exec_entry = entry
-                elif self.check_dict[entry['Op']] == 'Load' or self.check_dict[entry['Op']] == 'Store':
+                elif self.check_dict[entry['Op']] == 'Load':
                     if rob.get_state(entry['Dest']) == 'Issue':
                         if exec_unit == None or old_item >= entry['Item']:
                             exec_unit = self.address_unit
                             old_item = entry['Item']
                             exec_entry = entry
-                    elif rob.get_state(entry['Dest']) == 'Execute' and self.check_dict[entry['Op']] == 'Load':
+                    elif rob.get_state(entry['Dest']) == 'Execute':
                         if exec_unit == None or old_item >= entry['Item']:
                             exec_unit = self.memory_unit
                             old_item = entry['Item']
                             exec_entry = entry
+                elif self.check_dict[entry['Op']] == 'Store' and rob.get_state(entry['Dest'])=='Issue':
+                    if exec_unit == None or old_item >= entry['Item']:
+                        exec_unit = self.address_unit
+                        old_item = entry['Item']
+                        exec_entry = entry
                 elif self.check_dict[entry['Op']] == 'Int' and rob.get_state(entry['Dest'])=='Issue' and entry['Qk']==None:
                     if exec_unit == None or old_item >= entry['Item']:
                         exec_unit = self.integer_unit

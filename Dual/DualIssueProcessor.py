@@ -35,12 +35,15 @@ class DIPS:
             self.clock+=1
             print(f"-------------------------------Clock {self.clock}-------------------------------\n")
             self.comment += f"-------------------------------Clock {self.clock}-------------------------------\n"
-            self.register_file.store_cdb(self.cdb, self.reservation_station)
+
+            self.register_file.write_result(self.reservation_station, self.cdb)
+            self.op_queue.issue(self.register_file, self.reservation_station, self.cdb)
             self.cdb.clear()
             self.reservation_station.execute(self.cdb)
-            self.register_file.write_result(self.reservation_station)
-            self.op_queue.issue(self.register_file, self.reservation_station)
-                                                             
+            
+            self.reservation_station.recover_data()
+            self.register_file.recover_data()
+
             self.comment += f"                         ReservationStation\n"
             self.comment += self.reservation_station.show() + '\n'
             self.comment += f"                                   Registers\n"

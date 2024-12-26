@@ -1,11 +1,12 @@
 from prettytable import PrettyTable
 from CDB import CDB
+import copy
 class RegisterFile:
     def __init__(self):
         # 'x{} {}'.format(str(i+1),str(1))
         self.register_file = {'x{}'.format(j): {'Qi': None, 'Busy': False, 'Value': 0} for j in range(1, 4)}
         self.register_file['x1']['Value'] = 1000
-        self.temp_data = None
+        self.old_register_file = copy.deepcopy(self.register_file)
 
     def set_registers(self, reg: str, Qi: str):
         if reg not in self.register_file:
@@ -17,7 +18,7 @@ class RegisterFile:
         return self.register_file.keys()
     
     def get_value(self, reg):
-        return self.register_file[reg]['Value']
+        return self.old_register_file[reg]['Value']
     
     def set_reg_value(self, reg: str, value: str):
         if reg not in self.registers():
@@ -31,8 +32,8 @@ class RegisterFile:
         if reg not in self.registers():
             raise ValueError('RegisterFile类检查到错误寄存器{}'.format(reg))
         
-        if self.register_file[reg]['Busy']:
-            return self.register_file[reg]['Qi']
+        if self.old_register_file[reg]['Busy']:
+            return self.old_register_file[reg]['Qi']
         
         return 'Free'
     
@@ -45,24 +46,23 @@ class RegisterFile:
         
         return
 
-    def store_cdb(self, cdb: CDB, reservation_station):
+
+
+    def write_result(self, reservation_station, cdb: CDB):
         reservation_station.check_store()
         if cdb.is_empty():
-            self.temp_data = None
             return
-        import copy
-        self.temp_data = copy.deepcopy(cdb.get_data())
-        reservation_station.store_cdb(self.temp_data)
+        cdb_data = cdb.get_data()
 
-    def write_result(self, reservation_station):
-        if self.temp_data == None:
-            return
-        for data in self.temp_data:
+        for data in cdb_data:
            for reg in self.register_file.values():
                 if reg['Qi'] == data['Dest']:
                     reg['Qi'] = data['Value']
                     reg['Busy'] = False
-        reservation_station.write_result(self.temp_data)
+        reservation_station.write_result(cdb_data)
+
+    def recover_data(self):
+        self.old_register_file = copy.deepcopy(self.register_file)
 
     def show(self):
         # reload(sys)
