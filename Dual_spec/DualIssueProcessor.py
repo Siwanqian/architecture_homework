@@ -1,27 +1,10 @@
-"""
-假设写这里
-1，3个浮点加法保留站，两个乘除保留站，2个整数单元，2个ld单元和2个sd单元
-2，假设指令队列能够存储的数量为无限大
-3，CDB是数据广播总线，从Unit到保留站
-4，假设有十个寄存器
-5，ROB一共有7项
-6，在每个时钟周期内，执行顺序依次为：发射，提交，写回，执行
-7，功能单元的个数
-8，一个周期只能提交一个
-9，address和memory共用同一个周期数
-10，发射需要单独的一个周期
-11，参照第四章part1ppt，执行和执行完成需要的周期数是分开的
-"""
 from InsturctionQueue import InstructionQueue
 from ReservationStation import ReservationStation
 from CDB import CDB
 from RegisterFile import RegisterFile
 from ReorderBuffer import ROB
 
-            
-# TODO:1，在哪里考虑loop跳转（发射的时候处理吗）
-# 2, 对于ld和sd的第一个阶段，只要Vj存在就可以计算
-
+    
 class DIPS:
     def __init__(self, read_file_path):
         # 需要的模块：保留站 寄存器 ROB FP_OP_QUE CDB
@@ -37,13 +20,13 @@ class DIPS:
             self.clock+=1
             print(f"-------------------------------Clock {self.clock}-------------------------------\n")
             self.comment += f"-------------------------------Clock {self.clock}-------------------------------\n"
-            self.rob.commit(self.register_file, self.reservation_station, self.cdb)
-            self.rob.write_result(self.reservation_station, self.cdb)
-            self.op_queue.issue(self.rob, self.register_file, self.reservation_station, self.cdb)
-            self.cdb.clear()
-            self.reservation_station.execute(self.rob, self.cdb)
+            self.rob.commit(self.register_file, self.reservation_station, self.cdb) # 提交
+            self.rob.write_result(self.reservation_station, self.cdb) # 写结果
+            self.op_queue.issue(self.rob, self.register_file, self.reservation_station, self.cdb) # 发射
+            self.cdb.clear() # 清除CDB中的数据
+            self.reservation_station.execute(self.rob, self.cdb) # 执行
             
-
+            # 将功能单元中的本周期的新信息覆盖掉上一周期的信息
             self.reservation_station.recover_data()
             self.register_file.recover_data()
             self.rob.recover_data()

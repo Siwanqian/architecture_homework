@@ -3,24 +3,23 @@ from CDB import CDB
 import copy
 class RegisterFile:
     def __init__(self):
-        # 'x{} {}'.format(str(i+1),str(1))
         self.register_file = {'x{}'.format(j): {'Qi': None, 'Busy': False, 'Value': 0} for j in range(1, 4)}
         self.register_file['x1']['Value'] = 1000
         self.old_register_file = copy.deepcopy(self.register_file)
 
-    def set_registers(self, reg: str, Qi: str):
+    def set_registers(self, reg: str, Qi: str): # 设置寄存器为忙碌
         if reg not in self.register_file:
             raise ValueError('向寄存器组传递了不存在的寄存器')
         self.register_file[reg]['Qi'] = Qi
         self.register_file[reg]['Busy'] = True
 
-    def registers(self):
+    def registers(self): # 返回寄存器组
         return self.register_file.keys()
     
-    def get_value(self, reg):
+    def get_value(self, reg): # 获取对应寄存器的值
         return self.old_register_file[reg]['Value']
     
-    def set_reg_value(self, reg: str, value: str):
+    def set_reg_value(self, reg: str, value: str): # 设置寄存器的值
         if reg not in self.registers():
             return
         
@@ -28,7 +27,7 @@ class RegisterFile:
         
         return
 
-    def check_reg_state(self, reg: str):# 如果繁忙会返回对应的重排序，否则会返回'Free'
+    def check_reg_state(self, reg: str):# 如果繁忙会返回对应的保留站条目，否则会返回'Free'
         if reg not in self.registers():
             raise ValueError('RegisterFile类检查到错误寄存器{}'.format(reg))
         
@@ -37,7 +36,7 @@ class RegisterFile:
         
         return 'Free'
     
-    def free_reg(self, reg: str, Qi: str):
+    def free_reg(self, reg: str, Qi: str): # 如果是最后一条写入的保留站表项，释放寄存器
         if reg not in self.registers():
             return
         
@@ -48,7 +47,7 @@ class RegisterFile:
 
 
 
-    def write_result(self, reservation_station, cdb: CDB):
+    def write_result(self, reservation_station, cdb: CDB): # 从cdb中获取数据信息并写回
         reservation_station.check_store()
         if cdb.is_empty():
             return

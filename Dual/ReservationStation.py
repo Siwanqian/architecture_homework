@@ -6,7 +6,7 @@ import copy
 
 class ReservationStation:
     def __init__(self):
-        # 3个浮点加法保留站，两个乘除保留站，2个整数单元，2个ld单元和2个sd单元
+        # 3个浮点加法保留站，2个乘除保留站，5个整数单元，5个ld单元和3个sd单元
         self.entries = {
             'Load':[
                 {'Name': 'Load{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'A': None, 'State': None, 'Item': None} for i in range(1,3)
@@ -27,7 +27,7 @@ class ReservationStation:
         self.check_dict = {
             'fld': 'Load', 'ld': 'Load', 'fadd.d': 'Add', 'addi': 'Int', 'fsub.d': 'Add', 'fmul.d': 'Mult', 'fdiv.d': 'Mult', 'sd': 'Store', 'bne': 'Int'
         }
-        self.old_entries = copy.deepcopy(self.entries)
+        self.old_entries = copy.deepcopy(self.entries) # 设置上一周期表项，每次读取上一周期表项并在本周期表项中更新
         self.item = 1
         self.fp_adder = FPAdder()
         self.fp_multipliers = FPMultiplier()
@@ -38,7 +38,7 @@ class ReservationStation:
         self.loop_item = []
         
 
-    def is_full(self, op: str):
+    def is_full(self, op: str): # 判断指令对应的保留站是否已满
         if op not in self.check_dict:
             raise ValueError('保留站类is_full函数出现未定义操作{}'.format(op))
         
@@ -48,16 +48,9 @@ class ReservationStation:
                 return False
         return True
     
-    """def get_empty_unit(self):
-        empty_unit = []
-        for unit_name, unit in self.entries.items():
-            for entry in unit:
-                if entry['Busy'] == False:
-                    empty_unit.append(unit_name)
-                    break
-        return empty_unit"""
 
-    def change_state(self, dest: str, state: str):
+    def change_state(self, dest: str, state: str): # 更新表象的状态
+        # 判断更新的状态是否合法
         if state not in ['Issue', 'Execute', 'WriteResult', 'MemoryAccess', 'Commit']:
             raise ValueError('无法改变至非法状态{}'.format(state))
         for unit in self.entries.values():
@@ -67,33 +60,32 @@ class ReservationStation:
 
 
     def execute(self, cdb: CDB):
-        # 只允许执行bne及之前的内容
-        # 4self.show()
+        # 检测最早发射的未完成执行的跳转指令的对应条目
         execute_item = self.item if self.loop_item==[] else self.loop_item[0]
-        for unit_name, unit in self.old_entries.items():
+        for unit_name, unit in self.old_entries.items(): # 由于同周期每个阶段都是同时执行的，因此此处需要读取上一个周期能够执行的数据
             exec_unit = None
             exec_entry = None
             old_item = None
             for entry in unit:
-                if not entry['Busy'] or entry['Qj']!=None or entry['Item'] > execute_item:
+                if not entry['Busy'] or entry['Qj']!=None or entry['Item'] > execute_item: # 如果表项没有条目或者没有准备好执行或者表项在未完成执行的跳转指令之后
                     continue
                 if self.check_dict[entry['Op']] == 'Add' and entry['State']=='Issue' and entry['Qk']==None:
-                    if exec_unit == None or old_item >= entry['Item']:
+                    if exec_unit == None or old_item >= entry['Item']: # 检测最早发射的表项执行
                         exec_unit = self.fp_adder
-                        old_item = entry['Item']
+                        old_item = entry['Item'] # 记录此时准备发射的表项
                         exec_entry = entry
                 elif self.check_dict[entry['Op']] == 'Mult' and entry['State']=='Issue' and entry['Qk']==None:
-                    if exec_unit == None or old_item >= entry['Item']:
+                    if exec_unit == None or old_item >= entry['Item']: # 检测最早发射的表项执行
                         exec_unit = self.fp_multipliers
-                        old_item = entry['Item']
+                        old_item = entry['Item'] # 记录此时准备发射的表项
                         exec_entry = entry
                 elif self.check_dict[entry['Op']] == 'Load':
                     if entry['State'] == 'Issue':
                         if exec_unit == None or old_item >= entry['Item']:
-                            exec_unit = self.address_unit
+                            exec_unit = self.address_unit # 发射到地址单元
                             old_item = entry['Item']
                             exec_entry = entry
-                    elif entry['State'] == 'Execute':
+                    elif entry['State'] == 'Execute': # 如果地址已经计算完成
                         if exec_unit == None or old_item >= entry['Item']:
                             exec_unit = self.memory_unit
                             old_item = entry['Item']
@@ -111,22 +103,22 @@ class ReservationStation:
                 elif entry['Op'] not in self.check_dict:
                     raise ValueError('{}功能单元未定义'.format(entry['Op']))
 
-                # 把ROB改成执行
-            if exec_unit != None and not exec_unit.is_busy():
+            if exec_unit != None and not exec_unit.is_busy(): # 如果有表项可以执行且执行单元不忙碌
+                # 发射到对应的单元进行执行
                 if self.check_dict[exec_entry['Op']] == 'Load':
                     if exec_entry['State'] == 'Issue':
-                        for new_entry in self.entries[unit_name]:
+                        for new_entry in self.entries[unit_name]: # 对于地址单元发射，由于需要直接写入条目的A表项中，因此需要传入本周期的保留站
                             if new_entry['Name'] == exec_entry['Name']:
                                 exec_unit.issue_instruction(exec_entry['A'], exec_entry['Vj'], new_entry)
                     elif exec_entry['State'] == 'Execute':
                         exec_unit.issue_instruction(exec_entry['A'], exec_entry['Name'])
                 elif  self.check_dict[exec_entry['Op']] == 'Store':
-                    for new_entry in self.entries[unit_name]:
+                    for new_entry in self.entries[unit_name]: # 对于地址单元发射，由于需要直接写入条目的A表项中，因此需要传入本周期的保留站
                             if new_entry['Name'] == exec_entry['Name']:
                                 exec_unit.issue_instruction(exec_entry['A'], exec_entry['Vj'], new_entry)
                 else:
                     exec_unit.issue_instruction(exec_entry['Op'], exec_entry['Vj'], exec_entry['Vk'], exec_entry['Name'])
-        
+        # 各执行单元进行执行
         self.fp_adder.execute(cdb, self)
         self.fp_multipliers.execute(cdb, self)
         self.address_unit.execute(self)
@@ -135,7 +127,7 @@ class ReservationStation:
 
     def issue(self, issue_bundle: tuple, register_file: RegisterFile, cdb: CDB):
         bundle_size = len(issue_bundle)
-        # 记录冲突信息
+        # 记录数据依赖信息
         dependence = {}
         
         if bundle_size == 2:
@@ -172,7 +164,8 @@ class ReservationStation:
                 raise ValueError('保留站类set_station函数出现未定义操作{}'.format(op))
 
             entry_name = self.check_dict[op]
-            
+            # 为新发射的指令分配条目
+            # 由于所有指令都是都是执行的，因此只能分配上一周期空闲的条目，本周期刚写回的空闲条目无法分配
             entry = None
             for ent in self.old_entries[entry_name]:
                 if ent['Busy'] == False:
@@ -188,11 +181,6 @@ class ReservationStation:
             
             if i == 0:
                 first_entry = entry['Name']
-            # 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None
-            # 第二条指令
-            # ld指令：分析op[3]与上一条
-            # sd指令：分析op[1]和op[3]的关联
-            # alu：分析op[2]、op[3]的关联
             entry['Busy'] = True
             entry['Op'] = op
             entry['State'] = 'Issue'
@@ -205,7 +193,7 @@ class ReservationStation:
             dict_data = {}
             for data in cdb_data:
                 dict_data[data['Dest']] = data['Value']
-    
+            # 对每个指令分情况讨论其j和k的对应寄存器
             j_value = None
             k_value = None
             if entry_name == 'Load': # ld x2,0(x1)
@@ -227,45 +215,47 @@ class ReservationStation:
                     entry['Vk'] = int(ops[3])
                     j_value = ops[2]
 
+            # 为j寄存器赋值
             if j_value != None:
-                if i == 1 and j_value in dependence:
+                if i == 1 and j_value in dependence: # 如果是双发射的第二条指令且和第一条指令存在依赖关系
                     entry['Qj'] = first_entry
                     entry['Vj'] = None
-                elif register_file.check_reg_state(j_value) == 'Free':
+                elif register_file.check_reg_state(j_value) == 'Free': # 需要的寄存器没有被占用
                     entry['Vj'] = register_file.get_value(j_value)
                     entry['Qj'] = None
-                else:
+                else:  # 需要的寄存器被占用了
                     dest = register_file.check_reg_state(j_value)
-                    if dest in dict_data:
+                    if dest in dict_data: # 如果该值在本周期已经写回
                         entry['Vj'] = dict_data[dest]
                         entry['Qj'] = None
-                    else:
+                    else: # 如果该值没有被写回
                         entry['Qj'] = dest
                         entry['Vj'] = None
 
-
+            # 为k寄存器赋值
             if k_value != None:
-                if i == 1 and k_value in dependence:
+                if i == 1 and k_value in dependence: # 如果是双发射的第二条指令且和第一条指令存在依赖关系
                     entry['Qk'] = first_entry
                     entry['Vk'] = None
-                elif register_file.check_reg_state(k_value) == 'Free':
+                elif register_file.check_reg_state(k_value) == 'Free':# 需要的寄存器没有被占用
                     entry['Vk'] = register_file.get_value(j_value)
                     entry['Qk'] = None
-                else:
+                else: # 需要的寄存器被占用了
                     dest = register_file.check_reg_state(k_value)
-                    if dest in dict_data:
+                    if dest in dict_data: # 如果该值在本周期已经写回
                         entry['Vk'] = dict_data[dest]
                         entry['Qk'] = None
-                    else:
+                    else: # 如果该值没有被写回
                         entry['Qk'] = dest
                         entry['Vk'] = None
 
+            # 如果指令需要写寄存器，设置寄存器对应的保留站表项
             if ops[0] != 'sd' and ops[0] != 'bne':
                 register_file.set_registers(ops[1], entry['Name']) 
             
         return
     
-    def check_store(self):
+    def check_store(self): # 检测store保留站是否能够写入存储器
         for entry in self.entries['Store']:
             if entry['State'] == 'Execute' and entry['Qk'] == None:
                 self.memory_unit.Mem[entry['A']] = entry['Vk']
@@ -274,18 +264,18 @@ class ReservationStation:
 
 
 
-    def write_result(self, data_list: list):
-        # 如果是bne，判断能不能继续执行
-        for unit in self.entries.values():
+    def write_result(self, data_list: list): # 写回结果
+        for unit in self.entries.values(): # 检测每一个功能单元
             for entry in unit:
                 if not entry['Busy']:
                     continue
                 for data in data_list:
-                    if entry['Name'] == data['Dest']:
+                    if entry['Name'] == data['Dest']: # 如果写的是对应表项，则设置表项为不忙碌
                         entry['Busy'] = False
                         entry['State'] = 'WriteResult'
-                        if entry['Op'] == 'bne':
+                        if entry['Op'] == 'bne': # 如果bne指令执行完成，则后面的指令可以进入执行阶段
                             self.loop_item.pop(0)
+                    # 如果存在数据依赖，则可以写入
                     if entry['Qj'] == data['Dest']:
                         entry['Vj'] = data['Value']
                         entry['Qj'] = None
@@ -297,9 +287,6 @@ class ReservationStation:
 
 
     def show(self):
-        # reload(sys)
-        # sys.setdefaultencoding('utf8')
-
         head = ['Item', 'Name', 'Busy', 'Op', 'Vj', 'Vk', 'Qj', 'Qk', 'A', 'State']
         table = PrettyTable(head)
 
