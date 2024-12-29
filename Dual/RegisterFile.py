@@ -3,7 +3,10 @@ from CDB import CDB
 import copy
 class RegisterFile:
     def __init__(self):
-        self.register_file = {'x{}'.format(j): {'Qi': None, 'Busy': False, 'Value': 0} for j in range(1, 4)}
+        self.register_file = {'x{}'.format(j): {'Qi': None, 'Busy': False, 'Value': 1} for j in range(1, 4)}
+        """self.register_file = {**{'f{}'.format(i): {'Qi': None, 'Busy': False, 'Value': 1} for i in range(0, 11)},
+                              **{'x{}'.format(j): {'Qi': None, 'Busy': False, 'Value': 1} for j in range(1, 4)}
+                              }"""
         self.register_file['x1']['Value'] = 1000
         self.old_register_file = copy.deepcopy(self.register_file)
 
@@ -54,9 +57,9 @@ class RegisterFile:
         cdb_data = cdb.get_data()
 
         for data in cdb_data:
-           for reg in self.register_file.values():
+            for reg in self.register_file.values():
                 if reg['Qi'] == data['Dest']:
-                    reg['Qi'] = data['Value']
+                    reg['Value'] = data['Value']
                     reg['Busy'] = False
         reservation_station.write_result(cdb_data)
 

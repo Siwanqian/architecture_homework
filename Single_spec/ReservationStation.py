@@ -5,7 +5,7 @@ from CDB import CDB
 
 class ReservationStation:
     def __init__(self):
-        # 3个浮点加法保留站，两个乘除保留站，2个整数单元，2个ld单元和2个sd单元
+        # 3个浮点加法保留站，2个乘除保留站，5个整数单元，5个ld单元和3个sd单元
         self.entries = {
             'Load':[
                 {'Name': 'Load{}'.format(i), 'Busy': False, 'Op': None, 'Vj': None, 'Vk': None, 'Qj': None, 'Qk': None, 'Dest': None, 'A': None} for i in range(1,3)
@@ -33,7 +33,7 @@ class ReservationStation:
         self.integer_unit = IntegerUnit()
         
 
-    def is_full(self, instruction: str):
+    def is_full(self, instruction: str): # 判断指令对应的保留站是否已满
         op = instruction.split()[0]
 
         if op not in self.check_dict:
@@ -48,9 +48,8 @@ class ReservationStation:
     def execute(self, rob, cdb: CDB):
         for unit in self.entries.values():
             for entry in unit:
-                # TODO：这个地方需要判断他是不是在发射阶段吗
                 exec_unit = None
-                if not entry['Busy']:
+                if not entry['Busy']: # 如果表项没有条目则跳过
                     continue
                 if self.check_dict[entry['Op']] == 'Add':
                     if entry['Busy'] and entry['Qj']==None and entry['Qk']==None and rob.get_state(entry['Dest']) == 'Issue':
@@ -76,7 +75,8 @@ class ReservationStation:
                 else:
                     raise ValueError('{}功能单元未定义'.format(entry['Op']))
 
-                if not exec_unit.is_busy():
+                if not exec_unit.is_busy(): # 如果有表项可以执行且执行单元不忙碌
+                    # 发射到对应的单元进行执行
                     if self.check_dict[entry['Op']] == 'Load':
                         if rob.get_state(entry['Dest']) == 'Issue':
                             exec_unit.issue_instruction(entry['A'], entry['Vj'], entry)
@@ -86,13 +86,13 @@ class ReservationStation:
                         exec_unit.issue_instruction(entry['A'], entry['Vj'], entry['Dest'])
                     else:
                         exec_unit.issue_instruction(entry['Op'], entry['Vj'], entry['Vk'], entry['Dest'])
-
-
+        # 各执行单元进行执行
         self.fp_adder.execute(cdb, rob)
         self.fp_multipliers.execute(cdb, rob)
         self.address_unit.execute(rob)
         self.integer_unit.execute(cdb, rob)
         self.memory_unit.execute(cdb, rob)
+
     def set_station(self, register_file: RegisterFile, ops: list, index: str, rob):
         op = ops[0]
         if op not in self.check_dict:
@@ -101,6 +101,7 @@ class ReservationStation:
         entry_name = self.check_dict[op]
 
         entry = None
+        # 分配保留站
         for ent in self.entries[entry_name]:
             if ent['Busy'] == False:
                 entry = ent
@@ -112,6 +113,7 @@ class ReservationStation:
         entry['Op'] = op
         entry['Dest'] = index
 
+        # 对每个指令分情况讨论其j和k的对应寄存器
         j_value = None
         k_value = None
         if entry_name == 'Load': # ld x2,0(x1)
@@ -129,43 +131,45 @@ class ReservationStation:
             entry['A'] = ops[3]
             j_value = ops[2]
 
-
-        if register_file.check_reg_state(j_value)=='Free':
+        # 为j寄存器赋值
+        if register_file.check_reg_state(j_value)=='Free':# 需要的寄存器没有被占用
             entry['Vj'] = 'Regs[{}]'.format(j_value)
             entry['Qj'] = None
         else:
             reorder =  register_file.check_reg_state(j_value)
             value = rob.check_dest_state(reorder)
-            if value == 'NotReady':
+            if value == 'NotReady': # 需要的寄存器被占用了
                 entry['Qj'] = reorder
                 entry['Vj'] = None
-            else:
+            else: # 在之前的周期已经被写回
                 entry['Vj'] = value
                 entry['Qj'] = None
         
+        # 为k寄存器赋值
         if k_value != None:
-            if register_file.check_reg_state(k_value)=='Free':
+            if register_file.check_reg_state(k_value)=='Free': # 需要的寄存器没有被占用
                 entry['Vk'] = 'Regs[{}]'.format(k_value)
                 entry['Qk'] = None
-            else:
+            else: # 需要的寄存器被占用了
                 reorder =  register_file.check_reg_state(k_value)
                 value = rob.check_dest_state(reorder)
-                if value == 'NotReady':
+                if value == 'NotReady': # 如果该值没有被写回
                     entry['Qk'] = reorder
                     entry['Vk'] = None
-                else:
+                else: # 在之前的周期已经被写回
                     entry['Vk'] = value
                     entry['Qk'] = None
 
                     
-    def write_result(self, data):
-        for unit in self.entries.values():
+    def write_result(self, data): # 写回结果
+        for unit in self.entries.values(): # 检测每一个功能单元
             for entry in unit:
                 if not entry['Busy']:
                     continue
-                if entry['Dest'] == data['Dest']:
+                if entry['Dest'] == data['Dest']: # 如果写的是对应表项，则设置表项为不忙碌
                     entry['Busy'] = False
                     continue
+                # 如果存在数据依赖，则可以写入
                 if entry['Qj'] == data['Dest']:
                     entry['Vj'] = data['Value']
                     entry['Qj'] = None

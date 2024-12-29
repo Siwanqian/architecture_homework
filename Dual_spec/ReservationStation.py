@@ -111,7 +111,7 @@ class ReservationStation:
         self.memory_unit.execute(cdb, rob)
 
     def set_station(self, register_file: RegisterFile, issue_bundle: tuple, rob, dependece: dict, rob_entries: list, cdb: CDB):
-        # 为发射包中的指令分配ROB 
+        # 为发射包中的指令分配保留站
         for i, ops in enumerate(issue_bundle):
             op = ops[0]
             if op not in self.check_dict:

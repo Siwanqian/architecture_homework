@@ -12,15 +12,15 @@ class ROB:
 
         self.temp_data = None
         self.entries_num = entries_num
-        self.head = 1
-        self.tail = 1
+        self.head = 1 # ROB的未提交的第一条条目
+        self.tail = 1 # ROB中非忙碌状态的第一条条目
 
-    def is_full(self):
+    def is_full(self): # 检测ROB是否已满
         if self.tail ==self.head and self.entries[self.head]['Busy']:
             return True
         return False
     
-    def is_empty(self):
+    def is_empty(self): # 检测ROB是否为空
         if self.tail ==self.head and not self.entries[self.head]['Busy']:
             return True
         return False
@@ -29,6 +29,7 @@ class ROB:
         if self.entries[self.tail]['Busy']:
             raise ValueError("ROB模块issue异常发射")
         
+        # 指令的相关信息
         ops = re.split(r'[ ,()]+', instruction)
         self.entries[self.tail]['Busy'] = True
         self.entries[self.tail]['Instruction'] = instruction
@@ -36,11 +37,11 @@ class ROB:
         self.entries[self.tail]['Dest'] = ops[1] if ops[0] != 'fsd' else None
         self.entries[self.tail]['Value'] = None
         
-        # 保留站
+        # 保留站发射
         reservation_station.set_station(register_file, ops, self.entries[self.tail]['Entry'], self)
 
-        # 寄存器模块
-        if ops[0] != 'fsd':
+        # 寄存器模块，如果不是fsd和bne指令，其余指令都存在写寄存器操作
+        if ops[0] != 'fsd' and ops[0] != 'bne':
             register_file.set_registers(ops[1], self.entries[self.tail]['Entry'])
         
 
@@ -48,31 +49,35 @@ class ROB:
         return True
     
     def commit(self, register_file: RegisterFile):
+        # 保留站中没有数据则不需要提交
         if self.is_empty():
             return
-
+        
+        # 如果head条目可以发射
         if self.entries[self.head]['Busy'] and self.entries[self.head]['State'] == 'WriteResult':
+            register_file.set_reg_value(self.entries[self.head]['Dest'], self.entries[self.head]['Value'])
             # 如果此时的寄存器还是他，把他设为不忙碌
             register_file.free_reg(self.entries[self.head]['Dest'], self.entries[self.head]['Entry'])
             self.entries[self.head]['Busy'] = False
             self.entries[self.head]['State'] = 'Commit'
             self.head = self.head % self.entries_num + 1
 
-    def get_state(self, index: str):
+    def get_state(self, index: str): # 获取表项状态
         return self.entries[int(index)]['State']
     
-    def change_state(self, index: str, state: str):
+    def change_state(self, index: str, state: str): # 更改表项状态
         if state not in ['Issue', 'Execute', 'WriteResult', 'MemoryAccess', 'Commit']:
             raise ValueError('无法改变至非法状态{}'.format(state))
         self.entries[int(index)]['State'] = state
     
-    def check_dest_state(self, reorder):
+    def check_dest_state(self, reorder): # 检查目标表项是否已经写回
         if self.entries[int(reorder)]['State'] in ['WriteResult', 'Commit']:
+            # 如果已经写回，返回数值
             return self.entries[int(reorder)]['Value']
-        
+        # 如果为写回，返回未准备好
         return 'NotReady'
 
-    def store_cdb(self, cdb: CDB):
+    def store_cdb(self, cdb: CDB): # 暂存CDB中的数据
         if not cdb.is_busy():
             self.temp_data = None
             return
@@ -80,8 +85,7 @@ class ROB:
         self.entries[int(self.temp_data['Dest'])]['State'] = 'WriteResult'
 
     def write_result(self, reservation_station: ReservationStation):
-        # 从cdb中读取结果并写在rob上，然后更新regstation
-        # 返回的data：dest、
+        # 从cdb中读取结果并写在rob上，然后更新保留站
         if self.temp_data == None:
             return
         

@@ -37,7 +37,7 @@ class DIPS:
             self.comment += self.reservation_station.show() + '\n'
             self.comment += f"                                   Registers\n"
             self.comment += self.register_file.show() + '\n\n'
-            if self.clock == 19:
+            if self.clock == 12: # 限制周期数
                 break
 
         with open('python\ComputerArchitecture\Dual_spec\output.txt', 'w') as file:

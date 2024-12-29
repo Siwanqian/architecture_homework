@@ -25,7 +25,7 @@
 +-------+-------+------+-------+
 |   Qi  |  None | Int1 |  None |
 |  Busy | False | True | False |
-| Value |  1000 |  0   |   0   |
+| Value |  1000 |  1   |   1   |
 +-------+-------+------+-------+
 
 -------------------------------Clock 2-------------------------------
@@ -55,7 +55,7 @@
 +-------+------+------+-------+
 |   Qi  | Int2 | Int1 |  None |
 |  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
+| Value | 1000 |  1   |   1   |
 +-------+------+------+-------+
 
 -------------------------------Clock 3-------------------------------
@@ -85,7 +85,7 @@
 +-------+------+------+-------+
 |   Qi  | Int2 | Int1 |  None |
 |  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
+| Value | 1000 |  1   |   1   |
 +-------+------+------+-------+
 
 -------------------------------Clock 4-------------------------------
@@ -113,9 +113,9 @@
 +-------+-------+------+-------+
 |  Reg  |   x1  |  x2  |   x3  |
 +-------+-------+------+-------+
-|   Qi  |  1008 | Int4 |  None |
+|   Qi  |  Int2 | Int4 |  None |
 |  Busy | False | True | False |
-| Value |  1000 |  0   |   0   |
+| Value |  1008 |  1   |   1   |
 +-------+-------+------+-------+
 
 -------------------------------Clock 5-------------------------------
@@ -131,10 +131,10 @@
 | None | Mult1  | False | None | None | None |  None | None | None |     None    |
 | None | Mult2  | False | None | None | None |  None | None | None |     None    |
 |  3   | Store1 |  True |  sd  | 1000 | None |  None | Int1 | 1000 |   Execute   |
-|  8   | Store2 |  True |  sd  | 1000 | None |  None | Int4 |  0   |    Issue    |
+|  8   | Store2 |  True |  sd  | 1008 | None |  None | Int4 |  0   |    Issue    |
 | None | Store3 | False | None | None | None |  None | None | None |     None    |
 |  2   |  Int1  |  True | addi | 123  |  1   |  None | None | None |   Execute   |
-|  9   |  Int2  |  True | addi | 1000 |  8   |  None | None | None |    Issue    |
+|  9   |  Int2  |  True | addi | 1008 |  8   |  None | None | None |    Issue    |
 |  5   |  Int3  |  True | bne  | 1008 | 1000 |  None | None | None |    Issue    |
 |  7   |  Int4  |  True | addi | None |  1   | Load2 | None | None |    Issue    |
 | None |  Int5  | False | None | None | None |  None | None | None |     None    |
@@ -145,7 +145,7 @@
 +-------+------+------+-------+
 |   Qi  | Int2 | Int4 |  None |
 |  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
+| Value | 1008 |  1   |   1   |
 +-------+------+------+-------+
 
 -------------------------------Clock 6-------------------------------
@@ -161,13 +161,13 @@
 | None | Mult1  | False | None | None | None |  None | None | None |     None    |
 | None | Mult2  | False | None | None | None |  None | None | None |     None    |
 |  3   | Store1 |  True |  sd  | 1000 | 124  |  None | None | 1000 |   Execute   |
-|  8   | Store2 |  True |  sd  | 1000 | None |  None | Int4 |  0   |    Issue    |
+|  8   | Store2 |  True |  sd  | 1008 | None |  None | Int4 |  0   |    Issue    |
 | None | Store3 | False | None | None | None |  None | None | None |     None    |
 |  2   |  Int1  | False | addi | 123  |  1   |  None | None | None | WriteResult |
-|  9   |  Int2  |  True | addi | 1000 |  8   |  None | None | None |    Issue    |
+|  9   |  Int2  |  True | addi | 1008 |  8   |  None | None | None |    Issue    |
 |  5   |  Int3  |  True | bne  | 1008 | 1000 |  None | None | None |   Execute   |
 |  7   |  Int4  |  True | addi | None |  1   | Load2 | None | None |    Issue    |
-|  10  |  Int5  |  True | bne  | None | 1000 |  Int2 | None | None |    Issue    |
+|  10  |  Int5  |  True | bne  | None | 1008 |  Int2 | None | None |    Issue    |
 +------+--------+-------+------+------+------+-------+------+------+-------------+
                                    Registers
 +-------+------+------+-------+
@@ -175,7 +175,7 @@
 +-------+------+------+-------+
 |   Qi  | Int2 | Int4 |  None |
 |  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
+| Value | 1008 |  1   |   1   |
 +-------+------+------+-------+
 
 -------------------------------Clock 7-------------------------------
@@ -191,13 +191,13 @@
 | None | Mult1  | False | None | None | None |  None | None | None |     None     |
 | None | Mult2  | False | None | None | None |  None | None | None |     None     |
 |  3   | Store1 | False |  sd  | 1000 | 124  |  None | None | 1000 | MemoryAccess |
-|  8   | Store2 |  True |  sd  | 1000 | None |  None | Int4 |  0   |    Issue     |
+|  8   | Store2 |  True |  sd  | 1008 | None |  None | Int4 |  0   |    Issue     |
 | None | Store3 | False | None | None | None |  None | None | None |     None     |
 |  12  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue     |
-|  9   |  Int2  |  True | addi | 1000 |  8   |  None | None | None |   Execute    |
+|  9   |  Int2  |  True | addi | 1008 |  8   |  None | None | None |   Execute    |
 |  5   |  Int3  | False | bne  | 1008 | 1000 |  None | None | None | WriteResult  |
 |  7   |  Int4  |  True | addi | None |  1   | Load2 | None | None |    Issue     |
-|  10  |  Int5  |  True | bne  | None | 1000 |  Int2 | None | None |    Issue     |
+|  10  |  Int5  |  True | bne  | None | 1008 |  Int2 | None | None |    Issue     |
 +------+--------+-------+------+------+------+-------+------+------+--------------+
                                    Registers
 +-------+------+------+-------+
@@ -205,7 +205,7 @@
 +-------+------+------+-------+
 |   Qi  | Int2 | Int1 |  None |
 |  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
+| Value | 1008 |  1   |   1   |
 +-------+------+------+-------+
 
 -------------------------------Clock 8-------------------------------
@@ -213,21 +213,21 @@
 +------+--------+-------+------+------+------+-------+------+------+--------------+
 | Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
 +------+--------+-------+------+------+------+-------+------+------+--------------+
-|  11  | Load1  |  True |  ld  | 1008 | None |  None | None |  0   |    Issue     |
+|  11  | Load1  |  True |  ld  | 1016 | None |  None | None |  0   |    Issue     |
 |  6   | Load2  |  True |  ld  | 1008 | None |  None | None | 1008 | MemoryAccess |
 | None |  Add1  | False | None | None | None |  None | None | None |     None     |
 | None |  Add2  | False | None | None | None |  None | None | None |     None     |
 | None |  Add3  | False | None | None | None |  None | None | None |     None     |
 | None | Mult1  | False | None | None | None |  None | None | None |     None     |
 | None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  13  | Store1 |  True |  sd  | 1008 | None |  None | Int1 |  0   |    Issue     |
-|  8   | Store2 |  True |  sd  | 1000 | None |  None | Int4 | 1000 |   Execute    |
+|  13  | Store1 |  True |  sd  | 1016 | None |  None | Int1 |  0   |    Issue     |
+|  8   | Store2 |  True |  sd  | 1008 | None |  None | Int4 | 1008 |   Execute    |
 | None | Store3 | False | None | None | None |  None | None | None |     None     |
 |  12  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue     |
-|  9   |  Int2  | False | addi | 1000 |  8   |  None | None | None | WriteResult  |
-|  14  |  Int3  |  True | addi | 1008 |  8   |  None | None | None |    Issue     |
+|  9   |  Int2  | False | addi | 1008 |  8   |  None | None | None | WriteResult  |
+|  14  |  Int3  |  True | addi | 1016 |  8   |  None | None | None |    Issue     |
 |  7   |  Int4  |  True | addi | None |  1   | Load2 | None | None |    Issue     |
-|  10  |  Int5  |  True | bne  | 1008 | 1000 |  None | None | None |    Issue     |
+|  10  |  Int5  |  True | bne  | 1016 | 1008 |  None | None | None |    Issue     |
 +------+--------+-------+------+------+------+-------+------+------+--------------+
                                    Registers
 +-------+------+------+-------+
@@ -235,7 +235,7 @@
 +-------+------+------+-------+
 |   Qi  | Int3 | Int1 |  None |
 |  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
+| Value | 1016 |  1   |   1   |
 +-------+------+------+-------+
 
 -------------------------------Clock 9-------------------------------
@@ -243,21 +243,21 @@
 +------+--------+-------+------+------+------+-------+------+------+-------------+
 | Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State    |
 +------+--------+-------+------+------+------+-------+------+------+-------------+
-|  11  | Load1  |  True |  ld  | 1008 | None |  None | None |  0   |    Issue    |
+|  11  | Load1  |  True |  ld  | 1016 | None |  None | None |  0   |    Issue    |
 |  6   | Load2  | False |  ld  | 1008 | None |  None | None | 1008 | WriteResult |
 | None |  Add1  | False | None | None | None |  None | None | None |     None    |
 | None |  Add2  | False | None | None | None |  None | None | None |     None    |
 | None |  Add3  | False | None | None | None |  None | None | None |     None    |
 | None | Mult1  | False | None | None | None |  None | None | None |     None    |
 | None | Mult2  | False | None | None | None |  None | None | None |     None    |
-|  13  | Store1 |  True |  sd  | 1008 | None |  None | Int1 |  0   |    Issue    |
-|  8   | Store2 |  True |  sd  | 1000 | None |  None | Int4 | 1000 |   Execute   |
+|  13  | Store1 |  True |  sd  | 1016 | None |  None | Int1 |  0   |    Issue    |
+|  8   | Store2 |  True |  sd  | 1008 | None |  None | Int4 | 1008 |   Execute   |
 | None | Store3 | False | None | None | None |  None | None | None |     None    |
 |  12  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue    |
-|  15  |  Int2  |  True | bne  | None | 1000 |  Int3 | None | None |    Issue    |
-|  14  |  Int3  |  True | addi | 1008 |  8   |  None | None | None |    Issue    |
+|  15  |  Int2  |  True | bne  | None | 1016 |  Int3 | None | None |    Issue    |
+|  14  |  Int3  |  True | addi | 1016 |  8   |  None | None | None |    Issue    |
 |  7   |  Int4  |  True | addi | 123  |  1   |  None | None | None |    Issue    |
-|  10  |  Int5  |  True | bne  | 1008 | 1000 |  None | None | None |   Execute   |
+|  10  |  Int5  |  True | bne  | 1016 | 1008 |  None | None | None |   Execute   |
 +------+--------+-------+------+------+------+-------+------+------+-------------+
                                    Registers
 +-------+------+------+-------+
@@ -265,7 +265,7 @@
 +-------+------+------+-------+
 |   Qi  | Int3 | Int1 |  None |
 |  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
+| Value | 1016 |  1   |   1   |
 +-------+------+------+-------+
 
 -------------------------------Clock 10-------------------------------
@@ -273,21 +273,21 @@
 +------+--------+-------+------+------+------+-------+------+------+-------------+
 | Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State    |
 +------+--------+-------+------+------+------+-------+------+------+-------------+
-|  11  | Load1  |  True |  ld  | 1008 | None |  None | None | 1008 |   Execute   |
+|  11  | Load1  |  True |  ld  | 1016 | None |  None | None | 1016 |   Execute   |
 |  16  | Load2  |  True |  ld  | None | None |  Int3 | None |  0   |    Issue    |
 | None |  Add1  | False | None | None | None |  None | None | None |     None    |
 | None |  Add2  | False | None | None | None |  None | None | None |     None    |
 | None |  Add3  | False | None | None | None |  None | None | None |     None    |
 | None | Mult1  | False | None | None | None |  None | None | None |     None    |
 | None | Mult2  | False | None | None | None |  None | None | None |     None    |
-|  13  | Store1 |  True |  sd  | 1008 | None |  None | Int1 |  0   |    Issue    |
-|  8   | Store2 |  True |  sd  | 1000 | None |  None | Int4 | 1000 |   Execute   |
+|  13  | Store1 |  True |  sd  | 1016 | None |  None | Int1 |  0   |    Issue    |
+|  8   | Store2 |  True |  sd  | 1008 | None |  None | Int4 | 1008 |   Execute   |
 | None | Store3 | False | None | None | None |  None | None | None |     None    |
 |  12  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue    |
-|  15  |  Int2  |  True | bne  | None | 1000 |  Int3 | None | None |    Issue    |
-|  14  |  Int3  |  True | addi | 1008 |  8   |  None | None | None |    Issue    |
+|  15  |  Int2  |  True | bne  | None | 1016 |  Int3 | None | None |    Issue    |
+|  14  |  Int3  |  True | addi | 1016 |  8   |  None | None | None |    Issue    |
 |  7   |  Int4  |  True | addi | 123  |  1   |  None | None | None |   Execute   |
-|  10  |  Int5  | False | bne  | 1008 | 1000 |  None | None | None | WriteResult |
+|  10  |  Int5  | False | bne  | 1016 | 1008 |  None | None | None | WriteResult |
 +------+--------+-------+------+------+------+-------+------+------+-------------+
                                    Registers
 +-------+------+-------+-------+
@@ -295,7 +295,7 @@
 +-------+------+-------+-------+
 |   Qi  | Int3 | Load2 |  None |
 |  Busy | True |  True | False |
-| Value | 1000 |   0   |   0   |
+| Value | 1016 |   1   |   1   |
 +-------+------+-------+-------+
 
 -------------------------------Clock 11-------------------------------
@@ -303,19 +303,19 @@
 +------+--------+-------+------+------+------+-------+------+------+--------------+
 | Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
 +------+--------+-------+------+------+------+-------+------+------+--------------+
-|  11  | Load1  |  True |  ld  | 1008 | None |  None | None | 1008 | MemoryAccess |
+|  11  | Load1  |  True |  ld  | 1016 | None |  None | None | 1016 | MemoryAccess |
 |  16  | Load2  |  True |  ld  | None | None |  Int3 | None |  0   |    Issue     |
 | None |  Add1  | False | None | None | None |  None | None | None |     None     |
 | None |  Add2  | False | None | None | None |  None | None | None |     None     |
 | None |  Add3  | False | None | None | None |  None | None | None |     None     |
 | None | Mult1  | False | None | None | None |  None | None | None |     None     |
 | None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  13  | Store1 |  True |  sd  | 1008 | None |  None | Int1 | 1008 |   Execute    |
-|  8   | Store2 |  True |  sd  | 1000 | 124  |  None | None | 1000 |   Execute    |
+|  13  | Store1 |  True |  sd  | 1016 | None |  None | Int1 | 1016 |   Execute    |
+|  8   | Store2 |  True |  sd  | 1008 | 124  |  None | None | 1008 |   Execute    |
 |  18  | Store3 |  True |  sd  | None | None |  Int3 | Int5 |  0   |    Issue     |
 |  12  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue     |
-|  15  |  Int2  |  True | bne  | None | 1000 |  Int3 | None | None |    Issue     |
-|  14  |  Int3  |  True | addi | 1008 |  8   |  None | None | None |   Execute    |
+|  15  |  Int2  |  True | bne  | None | 1016 |  Int3 | None | None |    Issue     |
+|  14  |  Int3  |  True | addi | 1016 |  8   |  None | None | None |   Execute    |
 |  7   |  Int4  | False | addi | 123  |  1   |  None | None | None | WriteResult  |
 |  17  |  Int5  |  True | addi | None |  1   | Load2 | None | None |    Issue     |
 +------+--------+-------+------+------+------+-------+------+------+--------------+
@@ -325,7 +325,7 @@
 +-------+------+------+-------+
 |   Qi  | Int3 | Int5 |  None |
 |  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
+| Value | 1016 |  1   |   1   |
 +-------+------+------+-------+
 
 -------------------------------Clock 12-------------------------------
@@ -333,20 +333,20 @@
 +------+--------+-------+------+------+------+-------+------+------+--------------+
 | Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
 +------+--------+-------+------+------+------+-------+------+------+--------------+
-|  11  | Load1  | False |  ld  | 1008 | None |  None | None | 1008 | WriteResult  |
-|  16  | Load2  |  True |  ld  | 1016 | None |  None | None |  0   |    Issue     |
+|  11  | Load1  | False |  ld  | 1016 | None |  None | None | 1016 | WriteResult  |
+|  16  | Load2  |  True |  ld  | 1024 | None |  None | None |  0   |    Issue     |
 | None |  Add1  | False | None | None | None |  None | None | None |     None     |
 | None |  Add2  | False | None | None | None |  None | None | None |     None     |
 | None |  Add3  | False | None | None | None |  None | None | None |     None     |
 | None | Mult1  | False | None | None | None |  None | None | None |     None     |
 | None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  13  | Store1 |  True |  sd  | 1008 | None |  None | Int1 | 1008 |   Execute    |
-|  8   | Store2 | False |  sd  | 1000 | 124  |  None | None | 1000 | MemoryAccess |
-|  18  | Store3 |  True |  sd  | 1016 | None |  None | Int5 |  0   |    Issue     |
+|  13  | Store1 |  True |  sd  | 1016 | None |  None | Int1 | 1016 |   Execute    |
+|  8   | Store2 | False |  sd  | 1008 | 124  |  None | None | 1008 | MemoryAccess |
+|  18  | Store3 |  True |  sd  | 1024 | None |  None | Int5 |  0   |    Issue     |
 |  12  |  Int1  |  True | addi | 123  |  1   |  None | None | None |    Issue     |
-|  15  |  Int2  |  True | bne  | 1016 | 1000 |  None | None | None |    Issue     |
-|  14  |  Int3  | False | addi | 1008 |  8   |  None | None | None | WriteResult  |
-|  19  |  Int4  |  True | addi | 1016 |  8   |  None | None | None |    Issue     |
+|  15  |  Int2  |  True | bne  | 1024 | 1016 |  None | None | None |    Issue     |
+|  14  |  Int3  | False | addi | 1016 |  8   |  None | None | None | WriteResult  |
+|  19  |  Int4  |  True | addi | 1024 |  8   |  None | None | None |    Issue     |
 |  17  |  Int5  |  True | addi | None |  1   | Load2 | None | None |    Issue     |
 +------+--------+-------+------+------+------+-------+------+------+--------------+
                                    Registers
@@ -355,216 +355,6 @@
 +-------+------+------+-------+
 |   Qi  | Int4 | Int5 |  None |
 |  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
-+-------+------+------+-------+
-
--------------------------------Clock 13-------------------------------
-                         ReservationStation
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-| Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-|  11  | Load1  | False |  ld  | 1008 | None |  None | None | 1008 | WriteResult  |
-|  16  | Load2  |  True |  ld  | 1016 | None |  None | None |  0   |    Issue     |
-| None |  Add1  | False | None | None | None |  None | None | None |     None     |
-| None |  Add2  | False | None | None | None |  None | None | None |     None     |
-| None |  Add3  | False | None | None | None |  None | None | None |     None     |
-| None | Mult1  | False | None | None | None |  None | None | None |     None     |
-| None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  13  | Store1 |  True |  sd  | 1008 | None |  None | Int1 | 1008 |   Execute    |
-|  8   | Store2 | False |  sd  | 1000 | 124  |  None | None | 1000 | MemoryAccess |
-|  18  | Store3 |  True |  sd  | 1016 | None |  None | Int5 |  0   |    Issue     |
-|  12  |  Int1  |  True | addi | 123  |  1   |  None | None | None |   Execute    |
-|  15  |  Int2  |  True | bne  | 1016 | 1000 |  None | None | None |    Issue     |
-|  20  |  Int3  |  True | bne  | None | 1000 |  Int4 | None | None |    Issue     |
-|  19  |  Int4  |  True | addi | 1016 |  8   |  None | None | None |    Issue     |
-|  17  |  Int5  |  True | addi | None |  1   | Load2 | None | None |    Issue     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-                                   Registers
-+-------+------+------+-------+
-|  Reg  |  x1  |  x2  |   x3  |
-+-------+------+------+-------+
-|   Qi  | Int4 | Int5 |  None |
-|  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
-+-------+------+------+-------+
-
--------------------------------Clock 14-------------------------------
-                         ReservationStation
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-| Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-|  21  | Load1  |  True |  ld  | None | None |  Int4 | None |  0   |    Issue     |
-|  16  | Load2  |  True |  ld  | 1016 | None |  None | None |  0   |    Issue     |
-| None |  Add1  | False | None | None | None |  None | None | None |     None     |
-| None |  Add2  | False | None | None | None |  None | None | None |     None     |
-| None |  Add3  | False | None | None | None |  None | None | None |     None     |
-| None | Mult1  | False | None | None | None |  None | None | None |     None     |
-| None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  13  | Store1 |  True |  sd  | 1008 | 124  |  None | None | 1008 |   Execute    |
-|  8   | Store2 | False |  sd  | 1000 | 124  |  None | None | 1000 | MemoryAccess |
-|  18  | Store3 |  True |  sd  | 1016 | None |  None | Int5 |  0   |    Issue     |
-|  12  |  Int1  | False | addi | 123  |  1   |  None | None | None | WriteResult  |
-|  15  |  Int2  |  True | bne  | 1016 | 1000 |  None | None | None |   Execute    |
-|  20  |  Int3  |  True | bne  | None | 1000 |  Int4 | None | None |    Issue     |
-|  19  |  Int4  |  True | addi | 1016 |  8   |  None | None | None |    Issue     |
-|  17  |  Int5  |  True | addi | None |  1   | Load2 | None | None |    Issue     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-                                   Registers
-+-------+------+-------+-------+
-|  Reg  |  x1  |   x2  |   x3  |
-+-------+------+-------+-------+
-|   Qi  | Int4 | Load1 |  None |
-|  Busy | True |  True | False |
-| Value | 1000 |   0   |   0   |
-+-------+------+-------+-------+
-
--------------------------------Clock 15-------------------------------
-                         ReservationStation
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-| Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-|  21  | Load1  |  True |  ld  | None | None |  Int4 | None |  0   |    Issue     |
-|  16  | Load2  |  True |  ld  | 1016 | None |  None | None | 1016 |   Execute    |
-| None |  Add1  | False | None | None | None |  None | None | None |     None     |
-| None |  Add2  | False | None | None | None |  None | None | None |     None     |
-| None |  Add3  | False | None | None | None |  None | None | None |     None     |
-| None | Mult1  | False | None | None | None |  None | None | None |     None     |
-| None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  13  | Store1 | False |  sd  | 1008 | 124  |  None | None | 1008 | MemoryAccess |
-|  23  | Store2 |  True |  sd  | None | None |  Int4 | Int1 |  0   |    Issue     |
-|  18  | Store3 |  True |  sd  | 1016 | None |  None | Int5 |  0   |    Issue     |
-|  22  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue     |
-|  15  |  Int2  | False | bne  | 1016 | 1000 |  None | None | None | WriteResult  |
-|  20  |  Int3  |  True | bne  | None | 1000 |  Int4 | None | None |    Issue     |
-|  19  |  Int4  |  True | addi | 1016 |  8   |  None | None | None |   Execute    |
-|  17  |  Int5  |  True | addi | None |  1   | Load2 | None | None |    Issue     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-                                   Registers
-+-------+------+------+-------+
-|  Reg  |  x1  |  x2  |   x3  |
-+-------+------+------+-------+
-|   Qi  | Int4 | Int1 |  None |
-|  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
-+-------+------+------+-------+
-
--------------------------------Clock 16-------------------------------
-                         ReservationStation
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-| Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-|  21  | Load1  |  True |  ld  | 1024 | None |  None | None |  0   |    Issue     |
-|  16  | Load2  |  True |  ld  | 1016 | None |  None | None | 1016 | MemoryAccess |
-| None |  Add1  | False | None | None | None |  None | None | None |     None     |
-| None |  Add2  | False | None | None | None |  None | None | None |     None     |
-| None |  Add3  | False | None | None | None |  None | None | None |     None     |
-| None | Mult1  | False | None | None | None |  None | None | None |     None     |
-| None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  13  | Store1 | False |  sd  | 1008 | 124  |  None | None | 1008 | MemoryAccess |
-|  23  | Store2 |  True |  sd  | 1024 | None |  None | Int1 |  0   |    Issue     |
-|  18  | Store3 |  True |  sd  | 1016 | None |  None | Int5 | 1016 |   Execute    |
-|  22  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue     |
-|  24  |  Int2  |  True | addi | 1024 |  8   |  None | None | None |    Issue     |
-|  20  |  Int3  |  True | bne  | 1024 | 1000 |  None | None | None |    Issue     |
-|  19  |  Int4  | False | addi | 1016 |  8   |  None | None | None | WriteResult  |
-|  17  |  Int5  |  True | addi | None |  1   | Load2 | None | None |    Issue     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-                                   Registers
-+-------+------+------+-------+
-|  Reg  |  x1  |  x2  |   x3  |
-+-------+------+------+-------+
-|   Qi  | Int2 | Int1 |  None |
-|  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
-+-------+------+------+-------+
-
--------------------------------Clock 17-------------------------------
-                         ReservationStation
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-| Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-|  21  | Load1  |  True |  ld  | 1024 | None |  None | None |  0   |    Issue     |
-|  16  | Load2  | False |  ld  | 1016 | None |  None | None | 1016 | WriteResult  |
-| None |  Add1  | False | None | None | None |  None | None | None |     None     |
-| None |  Add2  | False | None | None | None |  None | None | None |     None     |
-| None |  Add3  | False | None | None | None |  None | None | None |     None     |
-| None | Mult1  | False | None | None | None |  None | None | None |     None     |
-| None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  13  | Store1 | False |  sd  | 1008 | 124  |  None | None | 1008 | MemoryAccess |
-|  23  | Store2 |  True |  sd  | 1024 | None |  None | Int1 |  0   |    Issue     |
-|  18  | Store3 |  True |  sd  | 1016 | None |  None | Int5 | 1016 |   Execute    |
-|  22  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue     |
-|  24  |  Int2  |  True | addi | 1024 |  8   |  None | None | None |    Issue     |
-|  20  |  Int3  |  True | bne  | 1024 | 1000 |  None | None | None |   Execute    |
-|  25  |  Int4  |  True | bne  | None | 1000 |  Int2 | None | None |    Issue     |
-|  17  |  Int5  |  True | addi | 123  |  1   |  None | None | None |    Issue     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-                                   Registers
-+-------+------+------+-------+
-|  Reg  |  x1  |  x2  |   x3  |
-+-------+------+------+-------+
-|   Qi  | Int2 | Int1 |  None |
-|  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
-+-------+------+------+-------+
-
--------------------------------Clock 18-------------------------------
-                         ReservationStation
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-| Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-|  21  | Load1  |  True |  ld  | 1024 | None |  None | None | 1024 |   Execute    |
-|  26  | Load2  |  True |  ld  | None | None |  Int2 | None |  0   |    Issue     |
-| None |  Add1  | False | None | None | None |  None | None | None |     None     |
-| None |  Add2  | False | None | None | None |  None | None | None |     None     |
-| None |  Add3  | False | None | None | None |  None | None | None |     None     |
-| None | Mult1  | False | None | None | None |  None | None | None |     None     |
-| None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  13  | Store1 | False |  sd  | 1008 | 124  |  None | None | 1008 | MemoryAccess |
-|  23  | Store2 |  True |  sd  | 1024 | None |  None | Int1 |  0   |    Issue     |
-|  18  | Store3 |  True |  sd  | 1016 | None |  None | Int5 | 1016 |   Execute    |
-|  22  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue     |
-|  24  |  Int2  |  True | addi | 1024 |  8   |  None | None | None |    Issue     |
-|  20  |  Int3  | False | bne  | 1024 | 1000 |  None | None | None | WriteResult  |
-|  25  |  Int4  |  True | bne  | None | 1000 |  Int2 | None | None |    Issue     |
-|  17  |  Int5  |  True | addi | 123  |  1   |  None | None | None |   Execute    |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-                                   Registers
-+-------+------+-------+-------+
-|  Reg  |  x1  |   x2  |   x3  |
-+-------+------+-------+-------+
-|   Qi  | Int2 | Load2 |  None |
-|  Busy | True |  True | False |
-| Value | 1000 |   0   |   0   |
-+-------+------+-------+-------+
-
--------------------------------Clock 19-------------------------------
-                         ReservationStation
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-| Item |  Name  |  Busy |  Op  |  Vj  |  Vk  |   Qj  |  Qk  |  A   |    State     |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-|  21  | Load1  |  True |  ld  | 1024 | None |  None | None | 1024 | MemoryAccess |
-|  26  | Load2  |  True |  ld  | None | None |  Int2 | None |  0   |    Issue     |
-| None |  Add1  | False | None | None | None |  None | None | None |     None     |
-| None |  Add2  | False | None | None | None |  None | None | None |     None     |
-| None |  Add3  | False | None | None | None |  None | None | None |     None     |
-| None | Mult1  | False | None | None | None |  None | None | None |     None     |
-| None | Mult2  | False | None | None | None |  None | None | None |     None     |
-|  28  | Store1 |  True |  sd  | None | None |  Int2 | Int3 |  0   |    Issue     |
-|  23  | Store2 |  True |  sd  | 1024 | None |  None | Int1 | 1024 |   Execute    |
-|  18  | Store3 |  True |  sd  | 1016 | 124  |  None | None | 1016 |   Execute    |
-|  22  |  Int1  |  True | addi | None |  1   | Load1 | None | None |    Issue     |
-|  24  |  Int2  |  True | addi | 1024 |  8   |  None | None | None |   Execute    |
-|  27  |  Int3  |  True | addi | None |  1   | Load2 | None | None |    Issue     |
-|  25  |  Int4  |  True | bne  | None | 1000 |  Int2 | None | None |    Issue     |
-|  17  |  Int5  | False | addi | 123  |  1   |  None | None | None | WriteResult  |
-+------+--------+-------+------+------+------+-------+------+------+--------------+
-                                   Registers
-+-------+------+------+-------+
-|  Reg  |  x1  |  x2  |   x3  |
-+-------+------+------+-------+
-|   Qi  | Int2 | Int3 |  None |
-|  Busy | True | True | False |
-| Value | 1000 |  0   |   0   |
+| Value | 1024 |  1   |   1   |
 +-------+------+------+-------+
 

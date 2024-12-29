@@ -2,22 +2,19 @@ from prettytable import PrettyTable
 from CDB import CDB
 class RegisterFile:
     def __init__(self):
-        # 'x{} {}'.format(str(i+1),str(1))
-        self.register_file = {**{'f{}'.format(i): {'Qi': None, 'Busy': False} for i in range(0, 11)},
-                              **{'x{}'.format(j): {'Qi': None, 'Busy': False} for j in range(1, 4)}
+        self.register_file = {**{'f{}'.format(i): {'Qi': None, 'Busy': False, 'Value' : 0} for i in range(0, 11)},
+                              **{'x{}'.format(j): {'Qi': None, 'Busy': False, 'Value' : 0} for j in range(1, 4)}
                               }
         self.regs = [i for i in self.register_file]
         self.temp_data = None
 
-    def set_registers(self, reg: str, Qi: str):
+    def set_registers(self, reg: str, Qi: str): # 设置寄存器为忙碌
         if reg not in self.register_file:
             raise ValueError('向寄存器组传递了不存在的寄存器')
-        self.register_file[reg] = {
-            'Qi': Qi,
-            'Busy': True
-        }
+        self.register_file[reg]['Qi'] = Qi
+        self.register_file[reg]['Busy'] = True
 
-    def registers(self):
+    def registers(self): # 返回寄存器组
         return self.regs
     
     def check_reg_state(self, reg: str):# 如果繁忙会返回对应的重排序，否则会返回'Free'
@@ -29,7 +26,7 @@ class RegisterFile:
         
         return 'Free'
     
-    def free_reg(self, reg: str, Qi: str):
+    def free_reg(self, reg: str, Qi: str): # 如果是最后一条写入的保留站表项，释放寄存器
         if reg not in self.regs:
             return
         
@@ -59,6 +56,10 @@ class RegisterFile:
             row.append(self.register_file[reg][row[0]])
         table.add_row(row)
 
+        row = ['Value']
+        for reg in self.register_file: 
+            row.append(self.register_file[reg][row[0]])
+        table.add_row(row)
         print(table)
         return str(table)
     
@@ -75,7 +76,7 @@ class RegisterFile:
         r = None
         for name, reg in self.register_file.items():
             if reg['Qi'] == self.temp_data['Dest']:
-                reg['Qi'] = self.temp_data['Value']
+                reg['Value'] = self.temp_data['Value']
                 reg['Busy'] = False
                 r = name
         reservation_station.write_result({'Dest': self.temp_data['Dest'], 'Value':'Regs[{}]'.format(r)})

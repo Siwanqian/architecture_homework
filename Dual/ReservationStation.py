@@ -28,7 +28,6 @@ class ReservationStation:
             'fld': 'Load', 'ld': 'Load', 'fadd.d': 'Add', 'addi': 'Int', 'fsub.d': 'Add', 'fmul.d': 'Mult', 'fdiv.d': 'Mult', 'sd': 'Store', 'bne': 'Int'
         }
         self.old_entries = copy.deepcopy(self.entries) # 设置上一周期表项，每次读取上一周期表项并在本周期表项中更新
-        self.item = 1
         self.fp_adder = FPAdder()
         self.fp_multipliers = FPMultiplier()
         self.address_unit = AddressUnit()
@@ -49,7 +48,7 @@ class ReservationStation:
         return True
     
 
-    def change_state(self, dest: str, state: str): # 更新表象的状态
+    def change_state(self, dest: str, state: str): # 更新表项的状态
         # 判断更新的状态是否合法
         if state not in ['Issue', 'Execute', 'WriteResult', 'MemoryAccess', 'Commit']:
             raise ValueError('无法改变至非法状态{}'.format(state))
@@ -64,8 +63,11 @@ class ReservationStation:
         execute_item = self.item if self.loop_item==[] else self.loop_item[0]
         for unit_name, unit in self.old_entries.items(): # 由于同周期每个阶段都是同时执行的，因此此处需要读取上一个周期能够执行的数据
             exec_unit = None
+            exec_unit1 = None
             exec_entry = None
+            exec_entry1 = None
             old_item = None
+            old_item1 = None
             for entry in unit:
                 if not entry['Busy'] or entry['Qj']!=None or entry['Item'] > execute_item: # 如果表项没有条目或者没有准备好执行或者表项在未完成执行的跳转指令之后
                     continue
@@ -86,10 +88,10 @@ class ReservationStation:
                             old_item = entry['Item']
                             exec_entry = entry
                     elif entry['State'] == 'Execute': # 如果地址已经计算完成
-                        if exec_unit == None or old_item >= entry['Item']:
-                            exec_unit = self.memory_unit
-                            old_item = entry['Item']
-                            exec_entry = entry
+                        if exec_unit1 == None or old_item1 >= entry['Item']:
+                            exec_unit1 = self.memory_unit
+                            old_item1 = entry['Item']
+                            exec_entry1 = entry
                 elif self.check_dict[entry['Op']] == 'Store' and entry['State']=='Issue':
                     if exec_unit == None or old_item >= entry['Item']:
                         exec_unit = self.address_unit
@@ -110,14 +112,17 @@ class ReservationStation:
                         for new_entry in self.entries[unit_name]: # 对于地址单元发射，由于需要直接写入条目的A表项中，因此需要传入本周期的保留站
                             if new_entry['Name'] == exec_entry['Name']:
                                 exec_unit.issue_instruction(exec_entry['A'], exec_entry['Vj'], new_entry)
-                    elif exec_entry['State'] == 'Execute':
-                        exec_unit.issue_instruction(exec_entry['A'], exec_entry['Name'])
                 elif  self.check_dict[exec_entry['Op']] == 'Store':
                     for new_entry in self.entries[unit_name]: # 对于地址单元发射，由于需要直接写入条目的A表项中，因此需要传入本周期的保留站
                             if new_entry['Name'] == exec_entry['Name']:
                                 exec_unit.issue_instruction(exec_entry['A'], exec_entry['Vj'], new_entry)
                 else:
                     exec_unit.issue_instruction(exec_entry['Op'], exec_entry['Vj'], exec_entry['Vk'], exec_entry['Name'])
+            
+            if exec_unit1 != None and not exec_unit1.is_busy(): # 如果有表项可以执行且执行单元不忙碌
+                    if exec_entry1['State'] == 'Execute':
+                        exec_unit1.issue_instruction(exec_entry1['A'], exec_entry1['Name'])
+             
         # 各执行单元进行执行
         self.fp_adder.execute(cdb, self)
         self.fp_multipliers.execute(cdb, self)
@@ -125,6 +130,13 @@ class ReservationStation:
         self.integer_unit.execute(cdb, self)
         self.memory_unit.execute(cdb, self)
 
+    def is_empty(self): # 检测保留站中是否为空
+        for unit in self.old_entries.values():
+            for entry in unit:
+                if entry['Busy'] == True:
+                    return False
+        return True
+    
     def issue(self, issue_bundle: tuple, register_file: RegisterFile, cdb: CDB):
         bundle_size = len(issue_bundle)
         # 记录数据依赖信息
@@ -148,10 +160,10 @@ class ReservationStation:
                     if ops1[0]=='sd' or ops1[0]=='bne':
                         dependence[ops1[1]] = ops0[1]
                 if ops1[2] == ops0[1]:
-                    if ops1[0]=='addi' or ops1[0] == 'add' or ops1[0]=='mult' or ops1[0]=='bne':
+                    if ops1[0]=='addi' or ops1[0] == 'fadd.d' or ops1[0]=='fsub.d' or ops1[0]=='fmul.d' or ops1[0]=='fdiv.d' or ops1[0]=='bne':
                         dependence[ops1[2]] = ops0[1]
                 if ops1[3] == ops0[1]:
-                    if ops1[0]=='ld' or ops1[0]=='sd'or ops1[0]=='addi' or ops1[0] == 'add' or ops1[0]=='mult':
+                    if ops1[0]=='ld' or ops1[0]=='sd'or ops1[0]=='addi' or ops1[0] == 'fadd.d' or ops1[0]=='fsub.d' or ops1[0]=='fmul.d' or ops1[0]=='fdiv.d':
                         dependence[ops1[3]] = ops0[1]
             
 

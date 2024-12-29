@@ -14,7 +14,7 @@ class DIPS:
         self.clock = 0
         self.comment = ""
     def run(self):
-        while not self.op_queue.is_empty() or not self.rob.is_empty():
+        while not self.op_queue.is_empty() or not self.reservation_station.is_empty():
             self.clock+=1
             print(f"-------------------------------Clock {self.clock}-------------------------------\n")
             self.comment += f"-------------------------------Clock {self.clock}-------------------------------\n"
@@ -32,11 +32,12 @@ class DIPS:
             self.comment += self.reservation_station.show() + '\n'
             self.comment += f"                                   Registers\n"
             self.comment += self.register_file.show() + '\n\n'
-            if self.clock == 19:
+            if self.clock == 12: # 限制周期数
                 break
 
         with open('python\ComputerArchitecture\Dual\output.txt', 'w') as file:
             file.write(self.comment)
+        # print(self.reservation_station.memory_unit.Mem)
             
 
 if __name__ == '__main__':

@@ -39,7 +39,7 @@ class FPAdder:
 class FPMultiplier:
     def __init__(self):
         self.busy = False
-        self.delay_time = {'fmul.d': 10, 'fdiv.d': 40}
+        self.delay_time = {'fmul.d': 6, 'fdiv.d': 12}
         self.remain_time = 0
         self.Op = None
         self.Vj = None
@@ -121,7 +121,8 @@ class MemoryUnit:
             return
         if not cdb.is_full():
             if self.addr not in self.Mem:
-                raise ValueError('存在未定义存储器{}'.format(self.addr))
+                self.Mem[self.addr] = 1
+                # raise ValueError('存在未定义存储器{}'.format(self.addr))
             reservation_station.change_state(self.dest, 'MemoryAccess')
             cdb.broadcast(self.dest, self.Mem[self.addr])
             self.busy = False
